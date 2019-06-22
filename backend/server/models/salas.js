@@ -11,13 +11,15 @@ module.exports=(sequelize, DataTypes)=>{
             allowNull: true
         }
     },
-    {classMethods:{
+    {
+        timestamps: false,
+        classMethods:{
         associate: function(models) {
             Sala.hasMany(models.Usuario, {
                 foreignKey: 'nombre_sala_FK',
                 onDelete: 'CASCADE'
             });
-        }, timestamps: false
+        }
     }});
     return Sala;
 }

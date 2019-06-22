@@ -12,13 +12,15 @@ module.exports=(sequelize, DataTypes)=>{
             allowNull: false
         }
     },
-    {classMethods:{
+    {
+        timestamps:false,
+        classMethods:{
         associate: function(models) {
             Mensaje_Privado.hasMany(models.Usuario_MensajeP, {
                 foreignKey: 'idMensaje_FK',
                 onDelete: 'CASCADE'
             });
-        }, timestamps: false
+        }
     }});
     return Mensaje_Privado;
 }

@@ -14,9 +14,19 @@ module.exports=(sequelize, DataTypes)=>{
         descripcion:{
             type: DataTypes.STRING,
             allowNull: true
+        },
+        idEvento_FK:{
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'Eventos',
+                key: 'id_Evento'
+            }
         }
     },
-    {classMethods:{
+    {
+        timestamps: false,
+        classMethods:{
         associate: function(models) {
             Notificacion.belongsTo(models.Evento, {
                 foreignKey: 'idEvento_FK',
@@ -26,7 +36,7 @@ module.exports=(sequelize, DataTypes)=>{
                 foreignKey: 'idNotificacion_FK',
                 onDelete: 'CASCADE'
             });
-        }, timestamps: false
+        }
     }});
     return Notificacion;
 }

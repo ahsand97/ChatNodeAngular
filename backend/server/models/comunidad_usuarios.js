@@ -6,9 +6,27 @@ module.exports=(sequelize, DataTypes)=>{
             allowNull: false,
             autoIncrement: true,
             unique: true
+        },
+        nicknameUsuario_FK:{
+            type: DataTypes.STRING,
+            allowNull: false,
+            references: {
+                model: 'Usuarios',
+                key: 'nickname'
+            }
+        },
+        nombreComunidad_FK:{
+            type: DataTypes.STRING,
+            allowNull: false,
+            references: {
+                model: 'Comunidades',
+                key: 'nombre'
+            }
         }
     },
-    {classMethods:{
+    {
+        timestamps:false,
+        classMethods:{
         associate: function(models) {
             Comunidad_Usuario.belongsTo(models.Usuario, {
                 foreignKey: 'nicknameUsuario_FK',

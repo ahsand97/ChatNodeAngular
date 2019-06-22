@@ -26,9 +26,27 @@ module.exports=(sequelize, DataTypes)=>{
         Lugar:{
             type: DataTypes.STRING,
             allowNull: false
+        },
+        nicknameCreador_FK:{
+            type: DataTypes.STRING,
+            allowNull: false,
+            references: {
+                model: 'Usuarios',
+                key: 'nickname'
+            }
+        },
+        nombreComunidad_FK:{
+            type: DataTypes.STRING,
+            allowNull: false,
+            references: {
+                model: 'Comunidades',
+                key: 'nombre'
+            }
         }
     },
-    {classMethods:{
+    {
+        timestamps:false,
+        classMethods:{
         associate: function(models) {
             Evento.belongsTo(models.Usuario, {
                 foreignKey: 'nicknameCreador_FK',
@@ -42,7 +60,7 @@ module.exports=(sequelize, DataTypes)=>{
                 foreignKey: 'idEvento_FK',
                 onDelete: 'CASCADE'
             });
-        }, timestamps: false
+        }
     }});
     return Evento;
 }

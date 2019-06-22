@@ -11,7 +11,9 @@ module.exports=(sequelize, DataTypes)=>{
             allowNull: true
         }
     },
-    {classMethods:{
+    {
+        timestamps:false,
+        classMethods:{
         associate: function(models) {
             Comunidad.hasMany(models.Evento, {
                 foreignKey: 'nombreComunidad_FK',
@@ -21,7 +23,7 @@ module.exports=(sequelize, DataTypes)=>{
                 foreignKey: 'nombreComunidad_FK',
                 onDelete: 'CASCADE'
             });
-        }, timestamps: false
+        }
     }});
     return Comunidad;
 }

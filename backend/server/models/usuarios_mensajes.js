@@ -6,6 +6,30 @@ module.exports=(sequelize, DataTypes)=>{
             allowNull: false,
             autoIncrement: true,
             unique: true
+        },
+        nicknameEmisor_FK:{
+            type: DataTypes.STRING,
+            allowNull: false,
+            references: {
+                model: 'Usuarios',
+                key: 'nickname'
+            }
+        },
+        nicknameReceptor_FK:{
+            type: DataTypes.STRING,
+            allowNull: false,
+            references: {
+                model: 'Usuarios',
+                key: 'nickname'
+            }
+        },
+        idMensaje_FK:{
+            type: DataTypes.STRING,
+            allowNull: false,
+            references: {
+                model: 'Mensajes_Privados',
+                key: 'id_Message'
+            }
         }
     },
     {
