@@ -14,8 +14,8 @@ function crear_usuario(req,res){
 function login(req,res){
     usuarios.findOne({
         where:{
-            nickname: req.body.nickname,
-            password: req.body.password
+            nickname: req.body.usuario.nickname,
+            password: req.body.usuario.password
         }
     })
     .then(usuario=>{

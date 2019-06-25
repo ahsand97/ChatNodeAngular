@@ -1,0 +1,39 @@
+
+<div class="fondo1">
+  <div class="row">
+    <div class="card col-md-4 col-md-offset-4 centrar sombra opacidad" style="width: 18rem;">
+      <div class="card-body">
+          <form #loginForm="ngForm" (ngSubmit)="login()" autocomplete="off">
+            <div id="Centrar-formulario">
+              <h3 class="text-center text-info">LOG IN</h3><br>
+              <div class="form-group">
+                <mat-form-field class="col-xs-12">
+                  <label for="nickname" class="text-info">Nickname:</label><br>
+                  <input matInput type="text" #nickname="ngModel" name="nickname" [(ngModel)]="usuario.nickname" onclick="hideError()" required>
+                  <mat-error *ngIf="nickname.invalid">Escribe un nickname</mat-error>
+                </mat-form-field>
+              </div>
+              <div class="form-group">
+                <mat-form-field class="col-xs-12">
+                  <label for="password" class="text-info">Contraseña:</label><br>
+                  <input matInput type="password" #password="ngModel" name="password" [(ngModel)]="usuario.password" onclick="hideError()" required>
+                  <mat-error *ngIf="password.invalid">Escribe una contraseña</mat-error>
+                </mat-form-field>
+              </div>
+              <div class="form-group">
+                  <button id="boton-ingreso" mat-raised-button class="btn btn-info btn-md" type="submit" [disabled]="!loginForm.form.valid">Ingresar</button>
+              </div>
+            </div>
+          </form>
+          <div id="error-servidor" class="alert alert-danger">
+            No se ha encontrado el nombre de usuario y contraseña.
+          </div>
+          <div id="register-link" class="text-right">
+              <a href="">
+                <i class="fa fa-plus-square mr-1"></i>Crear cuenta
+              </a>
+          </div>
+      </div>
+    </div>
+  </div>
+</div>
