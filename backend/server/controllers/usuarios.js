@@ -2,24 +2,40 @@ const usuarios = require("../models").Usuario;
 const jwt = require('../services/jwt');
 
 function crear_usuario(req,res){
-    usuarios.create(req.body)
+    usuarios.findOne({
+        where:{
+            nickname: req.body.nickname,
+        }
+    })
     .then(usuario=>{
-        res.status(200).send({usuario});
+        if(usuario){
+            res.status(401).send({id:'1', message: "Ya existe un usuario con el nickname ingresado."});
+        }
+        else{
+            usuarios.create(req.body)
+            .then(usuario=>{
+                res.status(200).send({usuario});
+            })
+            .catch(err=>{
+                res.status(500).send({id:'2', message: "Ocurrió un error al registrar el usuario."});
+            })
+        }
     })
     .catch(err=>{
-        res.status(500).send({err});
+        res.status(500).send({id: '2', message: "Ocurrió un error al registrar el usuario."});
     })
 }
 
 function login(req,res){
     usuarios.findOne({
         where:{
-            nickname: req.body.usuario.nickname,
-            password: req.body.usuario.password
+            nickname: req.body.nickname,
+            password: req.body.password
         }
     })
     .then(usuario=>{
         if(usuario){
+            usuario.estado = true;
             if(req.body.token){
                 res.status(200).send({token: jwt.createToken(usuario)});
             }else{

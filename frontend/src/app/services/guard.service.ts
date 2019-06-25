@@ -14,8 +14,8 @@ export class GuardService implements CanActivate{
     let identidad = this._auth.getIdentity();
     console.log(identidad);
     if(identidad){
-      if(destino[0] == 'login' || destino[0] == 'registro'){
-        this._router.navigate(['/principal']);
+      if(destino[0] == 'login'|| destino[0] == 'registro'){
+        this._router.navigate(['/auxiliar']);
         return false;
       }
       else{

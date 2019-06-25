@@ -13,8 +13,9 @@ class Usuarios(BaseCliente):
     nickname = Column(Text, primary_key=True, nullable=False, unique=True)
     nombre = Column(Text, nullable=False)
     password = Column(Text, nullable=False)
+    estado = Column(Boolean, nullable=False, default=False)
 
-    nombre_sala_FK = Column(Text, ForeignKey('Salas.nombre'), nullable=True)
+    nombre_sala_FK = Column(Text, ForeignKey('Salas.nombre'), nullable=False, default="Sala 1")
 
     sala = relationship("Salas", back_populates="usuarios")
     eventos = relationship("Eventos", back_populates="usuario")

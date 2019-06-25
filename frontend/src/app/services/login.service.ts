@@ -12,7 +12,8 @@ export class LoginService {
     this.url=GLOBAL.url;
    }
 
-  login(usuario:any, getToken?:boolean){
+  login(usuario: { 'nickname': any; 'password': any; }, getToken?:boolean){
+    console.log(usuario);
     let headers= new Headers({
       'Content-Type':'application/json'
     });

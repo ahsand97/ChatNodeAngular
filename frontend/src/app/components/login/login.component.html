@@ -1,27 +1,31 @@
 <app-navbar></app-navbar>
-<div class="fondo1">
+<body>
   <div class="row">
     <div class="card col-md-4 col-md-offset-4 centrar sombra opacidad" style="width: 18rem;">
       <div class="card-body">
-          <form #loginForm="ngForm" (ngSubmit)="login()" autocomplete="off">
+          <form [formGroup]="loginForm" (ngSubmit)="login()" autocomplete="off">
             <div id="Centrar-formulario">
               <h3 class="text-center text-info">LOG IN</h3><br>
               <div class="form-group">
                 <mat-form-field class="col-xs-12">
                   <label for="nickname" class="text-info">Nickname:</label><br>
-                  <input matInput type="text" #nickname="ngModel" name="nickname" [(ngModel)]="usuario.nickname" onclick="hideError()" required>
-                  <mat-error *ngIf="nickname.invalid">Escribe un nickname</mat-error>
+                  <input matInput type="text" formControlName="nickname" (click)="hideError()">
+                  <mat-error *ngIf="(nickname.dirty || nickname.touched) && nickname.invalid && nickname.errors.required">Escribe un nickname</mat-error>
+                  <mat-error *ngIf="(nickname.dirty || nickname.touched) && nickname.invalid && nickname.errors.minlength">El nickname debe contener mínimo 4 caracteres</mat-error>
+                  <mat-error *ngIf="(nickname.dirty || nickname.touched) && nickname.invalid && nickname.errors.maxlength">El nickname debe contener máximo 20 caracteres</mat-error>   
                 </mat-form-field>
               </div>
               <div class="form-group">
                 <mat-form-field class="col-xs-12">
                   <label for="password" class="text-info">Contraseña:</label><br>
-                  <input matInput type="password" #password="ngModel" name="password" [(ngModel)]="usuario.password" onclick="hideError()" required>
-                  <mat-error *ngIf="password.invalid">Escribe una contraseña</mat-error>
+                  <input matInput type="password" formControlName="password" (click)="hideError()">
+                  <mat-error *ngIf="(password.dirty || password.touched) && password.invalid && password.errors.required">Escribe la contraseña</mat-error>
+                  <mat-error *ngIf="(password.dirty || password.touched) && password.invalid && password.errors.minlength">La contraseña debe contener mínimo 4 caracteres</mat-error>
+                  <mat-error *ngIf="(password.dirty || password.touched) && password.invalid && password.errors.maxlength">La contraseña debe contener máximo 30 caracteres</mat-error>
                 </mat-form-field>
               </div>
               <div class="form-group">
-                  <button id="boton-ingreso" mat-raised-button class="btn btn-info btn-md" type="submit" [disabled]="!loginForm.form.valid">Ingresar</button>
+                  <button id="boton-ingreso" mat-raised-button class="btn btn-info btn-md" type="submit" [disabled]="!loginForm.valid">Ingresar</button>
               </div>
             </div>
           </form>
@@ -29,11 +33,11 @@
             No se ha encontrado el nombre de usuario y contraseña.
           </div>
           <div id="register-link" class="text-right">
-              <a href="">
+              <a href="registro">
                 <i class="fa fa-plus-square mr-1"></i>Crear cuenta
               </a>
           </div>
       </div>
     </div>
   </div>
-</div>
+</body>

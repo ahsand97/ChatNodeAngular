@@ -14,9 +14,15 @@ module.exports=(sequelize, DataTypes)=>{
             type: DataTypes.STRING,
             allowNull: false
         },
+        estado:{
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
+        },
         nombre_sala_FK:{
             type: DataTypes.STRING,
-            allowNull: true,
+            allowNull: false,
+            defaultValue: 'Sala 1',
             references: {
                 model: 'Salas',
                 key: 'nombre'
