@@ -11,6 +11,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegistroComponent } from './components/registro/registro.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { RegistroComponent } from './components/registro/registro.component';
     AppComponent,
     HomeComponent,
     LoginComponent,
-    RegistroComponent
+    RegistroComponent,
+    NavbarComponent
   ],
   imports: [
     BrowserModule,

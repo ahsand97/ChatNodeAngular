@@ -21,23 +21,3 @@
   color: white;
   transform: translateY(7px);
 }
-
-.carousel-item {
-      height: 100vh;
-      min-height: 350px;
-      background: no-repeat center center scroll;
-      -webkit-background-size: cover;
-      -moz-background-size: cover;
-      -o-background-size: cover;
-      background-size: cover;
-    }
-
-.fondo1{
-  background-image: url('src/assets/img/2.gif');
-}
-.fondo2{
-  background-image: url('src/assets/img/1.jpg');
-}
-.fondo3{
-  background-image: url('src/assets/img/2.jpg');
-}
