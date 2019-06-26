@@ -36,7 +36,6 @@ export class LoginComponent implements OnInit {
       this._Router.navigate(['/main']);
     })
     .catch(error=>{
-      console.log(error);
       var errorServer = document.getElementById('error-servidor');
       errorServer.style.display = 'block';
     });
