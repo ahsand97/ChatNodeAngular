@@ -6,7 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { PushNotificationsModule } from 'ng-push'
 
-import { MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule} from '@angular/material';
+import { MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatTabsModule, MatSidenavModule} from '@angular/material';
 
 import { AppRoutingModule } from './routes/app-routing.module';
 import { AppComponent } from './app.component';
@@ -16,6 +16,12 @@ import { LoginComponent } from './components/login/login.component';
 import { RegistroComponent } from './components/registro/registro.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { AuxiliarComponent } from './components/auxiliar/auxiliar.component';
+import { MainComponent } from './components/main/main.component';
+import { SalasComponent } from './components/salas/salas.component';
+import { ComunidadesComponent } from './components/comunidades/comunidades.component';
+import { EventosComponent } from './components/eventos/eventos.component';
+import { NotificacionesComponent } from './components/notificaciones/notificaciones.component';
+import { MensajesComponent } from './components/mensajes/mensajes.component';
 
 
 @NgModule({
@@ -24,7 +30,13 @@ import { AuxiliarComponent } from './components/auxiliar/auxiliar.component';
     LoginComponent,
     RegistroComponent,
     NavbarComponent,
-    AuxiliarComponent
+    AuxiliarComponent,
+    MainComponent,
+    SalasComponent,
+    ComunidadesComponent,
+    EventosComponent,
+    NotificacionesComponent,
+    MensajesComponent
   ],
   imports: [
     BrowserModule,
@@ -37,7 +49,9 @@ import { AuxiliarComponent } from './components/auxiliar/auxiliar.component';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
-    PushNotificationsModule
+    PushNotificationsModule,
+    MatTabsModule,
+    MatSidenavModule
   ],
   providers: [],
   bootstrap: [AppComponent]
