@@ -12,6 +12,7 @@ export class AuxiliarComponent implements OnInit {
   constructor(private _auth:AuthService, private _router:Router) { }
 
   ngOnInit() {
+    console.log(this._auth.getIdentity());
   }
 
   logout(){

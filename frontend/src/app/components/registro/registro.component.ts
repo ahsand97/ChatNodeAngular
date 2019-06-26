@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { MustMatch } from './validadorClaves';
 import { RegistroService } from 'src/app/services/registro.service';
 
-import { PushNotificationsService } from 'ng-push';
+import {MatSnackBar} from '@angular/material';
 
 @Component({
   selector: 'app-registro',
@@ -14,7 +14,7 @@ import { PushNotificationsService } from 'ng-push';
 export class RegistroComponent implements OnInit {
   registroForm: FormGroup;
 
-  constructor(private _PushNotifications:PushNotificationsService ,private _ServicioRegistro:RegistroService, private _Router:Router, private _formBuilder:FormBuilder) { }
+  constructor(private _SnackBar:MatSnackBar ,private _ServicioRegistro:RegistroService, private _Router:Router, private _formBuilder:FormBuilder) { }
 
   ngOnInit() {
     this.registroForm = this._formBuilder.group({
@@ -25,7 +25,6 @@ export class RegistroComponent implements OnInit {
     },{
       validator: MustMatch('password','confirmpassword')
     });
-    this._PushNotifications.requestPermission();
   }
 
   get nickname() { return this.registroForm.get('nickname'); }
@@ -62,14 +61,6 @@ export class RegistroComponent implements OnInit {
   }
 
   notificar(){
-    let options={
-      body: 'Registro Exitoso!',
-      icon: 'assets/img/notificacion.png'
-    }
-
-    this._PushNotifications.create('Registro', options).subscribe(
-      res => console.log(res),
-      err => console.log(err)
-    );
+    this._SnackBar.open('Registro Exitoso', 'Cerrar',{duration: 3000});
   }
 }

@@ -13,7 +13,6 @@ export class LoginService {
    }
 
   login(usuario: { 'nickname': any; 'password': any; }, getToken?:boolean){
-    console.log(usuario);
     let headers= new Headers({
       'Content-Type':'application/json'
     });

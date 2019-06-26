@@ -4,6 +4,7 @@ import { LoginComponent } from '../components/login/login.component';
 import { GuardService } from '../services/guard.service';
 import { RegistroComponent } from '../components/registro/registro.component';
 import { AuxiliarComponent } from '../components/auxiliar/auxiliar.component';
+import { PrincipalComponent } from '../components/principal/principal.component';
 
 const routes: Routes = [
   {
@@ -17,6 +18,9 @@ const routes: Routes = [
   },
   {
     path:'auxiliar', component:AuxiliarComponent
+  },
+  {
+    path:'principal', component:PrincipalComponent, canActivate:[GuardService], data:{'destino':['principal']}
   },
   {
     path:'**', pathMatch:'full', redirectTo:'login'

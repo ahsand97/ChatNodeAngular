@@ -13,7 +13,6 @@ export class RegistroService {
   }
 
   registrar(nuevoUsuario: { 'nickname': any; 'nombre': any; 'password': any; }){
-    console.log(nuevoUsuario);
     let headers= new Headers({
       'Content-Type':'application/json'
     });
