@@ -24,6 +24,7 @@ export class MensajesComponent implements OnInit {
 
   selectUser(user:any){
     this.userSelcted=user;
+    this.users.pop();
     
     console.log(this.userSelcted);
   }
