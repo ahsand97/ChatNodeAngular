@@ -17,7 +17,7 @@ const routes: Routes = [
     path:'registro', component:RegistroComponent, canActivate:[GuardService], data:{'destino':['registro']}
   },
   {
-    path:'auxiliar', component:AuxiliarComponent
+    path:'auxiliar', component:AuxiliarComponent //para pruebas , no hace nada
   },
   {
     path:'principal', component:PrincipalComponent, canActivate:[GuardService], data:{'destino':['principal']}

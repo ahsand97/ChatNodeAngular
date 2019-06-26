@@ -1,0 +1,16 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav mode="side" opened class="sidenav">
+    <button mat-button *ngFor="let user of users" class="button" (click)="selectUser(user)">{{user.nickname}}</button>
+  </mat-sidenav>
+  <mat-sidenav-content class="sidenav-content">
+    <div class="messages-content" >
+      <p>{{userSelcted.nickname}}</p>
+    </div>
+    <div class="form-content">
+      <mat-form-field class="form-field" appearance="outline">
+        <input matInput type="text" class="mensaje">
+      </mat-form-field>
+    </div>
+    
+  </mat-sidenav-content>
+</mat-sidenav-container>

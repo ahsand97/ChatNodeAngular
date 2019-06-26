@@ -1,0 +1,44 @@
+.sidenav-container{
+    position: fixed;
+    height: 100%;
+    width: 100%;
+}
+
+.sidenav{
+    width: 200px;
+    background-color: blueviolet;
+}
+
+.sidenav-content{
+    position: absolute;
+    left:50%;
+    top:50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+}
+
+.form-field{
+    width: 90%;
+    border-radius: 8px;
+}
+
+.button{
+    width: 100%;
+}
+
+.mensaje{
+    width: 100%;
+}
+
+.form-content{
+    border-top: solid 2px purple;
+    width: 80%;
+    margin-left: 20px;
+}
+
+.messages-content{
+    border: solid 2px pink;
+    height: 80%;
+    width: 80%;
+    margin-left: 20px;
+}

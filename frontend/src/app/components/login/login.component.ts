@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
     this._ServicioLogin.login(usuario)
     .then(respuesta=>{
       localStorage.setItem('identidad_usuario', JSON.stringify(respuesta));
-      this._Router.navigate(['/auxiliar']);
+      this._Router.navigate(['/main']);
     })
     .catch(error=>{
       var errorServer = document.getElementById('error-servidor');
