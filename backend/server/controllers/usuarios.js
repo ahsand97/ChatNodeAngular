@@ -1,5 +1,6 @@
 const usuarios = require("../models").Usuario;
 const jwt = require('../services/jwt');
+const db = require('../models/index');
 
 function crear_usuario(req,res){
     usuarios.findOne({
@@ -35,13 +36,32 @@ function login(req,res){
     })
     .then(usuario=>{
         if(usuario){
-            usuario.estado = true;
-            if(req.body.token){
-                res.status(200).send({token: jwt.createToken(usuario)});
-            }else{
-                res.status(200).send({usuario: usuario});
-            }
-        }else{
+            db.sequelize.query("UPDATE \"Usuarios\" SET \"estado\" = \'true\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+            var token = jwt.createToken(usuario);
+            usuarioEnvio = {token: token, nickname: usuario.dataValues['nickname'], nombre: usuario.dataValues['nombre']}
+            res.status(200).send({usuario: usuarioEnvio});
+        }
+        else{
+            res.status(401).send({message: "Acceso no autorizado."});
+        }
+    })
+    .catch(err=>{
+        res.status(500).send({message: "Ocurrió un error al buscar el usuario."});
+    })
+}
+
+function logout(req,res){
+    usuarios.findOne({
+        where:{
+            nickname: req.body.nickname
+        }
+    })
+    .then(usuario=>{
+        if(usuario){
+            db.sequelize.query("UPDATE \"Usuarios\" SET \"estado\" = \'false\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+            res.status(200).send({message: 'Sesion cerrada.'});
+        }
+        else{
             res.status(401).send({message: "Acceso no autorizado."});
         }
     })
@@ -63,5 +83,6 @@ function getAll(req,res){
 module.exports={
     crear_usuario,
     login,
-    getAll
+    getAll,
+    logout
 }

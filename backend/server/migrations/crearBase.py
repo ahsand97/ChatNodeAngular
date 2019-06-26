@@ -10,7 +10,7 @@ from sqlalchemy.orm import relationship, backref
 
 class Usuarios(BaseCliente):
     __tablename__ = 'Usuarios'
-    nickname = Column(Text, primary_key=True, nullable=False, unique=True)
+    nickname = Column(Text, primary_key=True, nullable=False)
     nombre = Column(Text, nullable=False)
     password = Column(Text, nullable=False)
     estado = Column(Boolean, nullable=False, default=False)
@@ -30,7 +30,7 @@ class Usuarios(BaseCliente):
 
 class Salas(BaseCliente):
     __tablename__ = 'Salas'
-    nombre = Column(Text, primary_key=True, nullable=False, unique=True)
+    nombre = Column(Text, primary_key=True, nullable=False)
     descripcion = Column(Text, nullable=True)
 
     usuarios = relationship("Usuarios", back_populates="sala")
@@ -40,7 +40,7 @@ class Salas(BaseCliente):
 
 class Eventos(BaseCliente):
     __tablename__ = 'Eventos'
-    id_Evento = Column(Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
+    id_Evento = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     nombre = Column(Text, nullable=False)
     descripcion = Column(Text, nullable=True)
     fecha = Column(Text, nullable=False)
@@ -59,7 +59,7 @@ class Eventos(BaseCliente):
 
 class Comunidades(BaseCliente):
     __tablename__ = 'Comunidades'
-    nombre = Column(Text, primary_key=True, nullable=False, unique=True)
+    nombre = Column(Text, primary_key=True, nullable=False)
     descripcion = Column(Text, nullable=True)
 
     eventos = relationship("Eventos", back_populates="comunidad")
@@ -70,7 +70,7 @@ class Comunidades(BaseCliente):
 
 class Notificaciones(BaseCliente):
     __tablename__ = 'Notificaciones'
-    id_Notificacion = Column(Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
+    id_Notificacion = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     nombre = Column(Text, nullable=False)
     descripcion = Column(Text, nullable=True)
 
@@ -84,7 +84,7 @@ class Notificaciones(BaseCliente):
 
 class Notificaciones_Usuarios(BaseCliente):
     __tablename__ = 'Notificaciones_Usuarios'
-    id_Notificacion_Usuario = Column(Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
+    id_Notificacion_Usuario = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     leida = Column(Boolean, nullable=False)
 
     idNotificacion_FK = Column(Integer, ForeignKey('Notificaciones.id_Notificacion'), nullable=False)
@@ -98,7 +98,7 @@ class Notificaciones_Usuarios(BaseCliente):
 
 class Comunidades_Usuarios(BaseCliente):
     __tablename__ = 'Comunidades_Usuarios'
-    id_Comunidad_Usuario = Column(Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
+    id_Comunidad_Usuario = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
 
     nicknameUsuario_FK = Column(Text, ForeignKey('Usuarios.nickname'), nullable=False)
     nombreComunidad_FK = Column(Text, ForeignKey('Comunidades.nombre'), nullable=False)
@@ -111,7 +111,7 @@ class Comunidades_Usuarios(BaseCliente):
 
 class Mensajes_Privados(BaseCliente):
     __tablename__ = 'Mensajes_Privados'
-    id_Message = Column(Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
+    id_Message = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     Body = Column(Text, nullable=False)
 
     usuarios_mensajesp = relationship("Usuarios_MensajesP", back_populates="mensaje")
@@ -121,7 +121,7 @@ class Mensajes_Privados(BaseCliente):
 
 class Usuarios_MensajesP(BaseCliente):
     __tablename__ = 'Usuarios_MensajesPrivados'
-    id_Usuario_MensajeP = Column(Integer, primary_key=True, nullable=False, autoincrement=True, unique=True)
+    id_Usuario_MensajeP = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
 
     nicknameEmisor_FK = Column(Text, ForeignKey('Usuarios.nickname'), nullable=False)
     nicknameReceptor_FK = Column(Text, ForeignKey('Usuarios.nickname'), nullable=False)

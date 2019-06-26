@@ -32,8 +32,7 @@ export class LoginComponent implements OnInit {
     let usuario = {'nickname': this.nickname.value, 'password': this.password.value};
     this._ServicioLogin.login(usuario)
     .then(respuesta=>{
-      localStorage.setItem('identidad_usuario', JSON.stringify(respuesta.usuario));
-      //console.log(JSON.parse(localStorage.getItem('identidad_usuario')));
+      localStorage.setItem('identidad_usuario', JSON.stringify(respuesta));
       this._Router.navigate(['/auxiliar']);
     })
     .catch(error=>{

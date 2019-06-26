@@ -12,7 +12,6 @@ export class GuardService implements CanActivate{
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot){
     let destino = route.data['destino'] as Array<string>;
     let identidad = this._auth.getIdentity();
-    console.log(identidad);
     if(identidad){
       if(destino[0] == 'login'|| destino[0] == 'registro'){
         this._router.navigate(['/auxiliar']);
