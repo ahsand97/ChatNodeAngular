@@ -1,5 +1,6 @@
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav mode="side" opened class="sidenav">
+    <h3>Usuarios</h3>
     <button mat-button *ngFor="let user of users" class="button" (click)="selectUser(user)">{{user.nickname}}</button>
   </mat-sidenav>
   <mat-sidenav-content class="sidenav-content">

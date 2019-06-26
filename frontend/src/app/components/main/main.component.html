@@ -1,7 +1,8 @@
-<nav mat-tab-nav-bar>
+<nav mat-tab-nav-bar mat-align-tabs="center" class="ma-tab">
   <a mat-tab-link *ngFor="let link of links" [routerLink]="link.path" routerLinkActive="active">
     {{link.label}}
   </a>
+  <a mat-tab-link (click)="logOut()">Salir</a>
 </nav>
 
 <router-outlet></router-outlet>

@@ -1,3 +1,19 @@
-<p>
-  salas works!
-</p>
+<mat-sidenav-container class="sidenav-container">
+    <mat-sidenav mode="side" opened class="sidenav">
+      <h3>Salas</h3>
+      <button mat-button *ngFor="let room of rooms" class="button" (click)="selectRoom(room)">{{room.name}}</button>
+    </mat-sidenav>
+    <mat-sidenav-content class="sidenav-content">
+      <div class="messages-content" >
+        <p *ngFor="let message of messages"> {{message.cuerpo}}</p>
+      </div>
+      <div class="form-content">
+        <mat-form-field class="form-field" appearance="outline">
+          <input matInput type="text" class="mensaje" [(ngModel)]="mensaje" (keyup)="$event.keyCode == 13 && sendMessage()">
+        </mat-form-field>
+        <button mat-raised-button (click)="sendMessage()">Enviar</button>
+      </div>
+      
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+  
