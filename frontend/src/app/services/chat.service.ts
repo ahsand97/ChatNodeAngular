@@ -19,6 +19,14 @@ export class ChatService {
     this.socket.emit('nuevo-mensaje', cuerpo);
   }
 
+  joinSala(cuerpo:any){
+    this.socket.emit('join', cuerpo);
+  }
+
+  leaveSala(cuerpo:any){
+    this.socket.emit('leave', cuerpo);
+  }
+
   public getMessages = () => {
     return Observable.create((observer) => {
         this.socket.on('nuevo-mensaje', (message) => {

@@ -19,9 +19,23 @@ socketio.on('connection', function(socket){
 
     socket.on('nuevo-mensaje', function(cuerpo){
         console.log(cuerpo);
-        //socketio.in('Sala1').emit('nuevo-mensae', 'hola');
+        //socketio.to(cuerpo.sala).emit('nuevo-mensaje', cuerpo);
+        //console.log("envie",cuerpo);
         socketio.emit('nuevo-mensaje', cuerpo);
     })
+
+    socket.on('join', function(sala){
+        console.log("Se ha unido a la ", sala, socket.id);
+        //socketio.in('Sala1').emit('nuevo-mensae', 'hola');
+        socket.join(sala);
+    })
+
+    socket.on('leave', function(sala){
+        console.log("Se ha salido de la ", sala, socket.id);
+        //socketio.in('Sala1').emit('nuevo-mensae', 'hola');
+        socket.leave(sala);
+    })
+
 });
 
 server.listen(port); 

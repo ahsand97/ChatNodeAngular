@@ -12,26 +12,29 @@ import { RefreshService } from 'src/app/services/refresh.service';
 export class SalasComponent implements OnInit {
 
   rooms = [
-    {name:"Juanito1"},
-    {name:"Juanito2"},
-    {name:"Juanito3"},
-    {name:"Juanito4"},
-    {name:"Juanito5"},
-    {name:"Juanito6"}
+    {name:"Sala1", messages: []},
+    {name:"Sala2", messages: []},
+    {name:"Sala3", messages: []},
+    {name:"Sala4", messages: []},
+    {name:"Sala5", messages: []}
   ];
 
-  roomSelcted:any = {name:"Nohasselecionaoanaide"};
-  messages:string[] = [];
+  roomSelcted:any = this.rooms[0];
+  //messages:string[] = [];
   identidad:any;
-  envio: { nickname: any; cuerpo: any; };
+  envio: { nickname: any; cuerpo: any; sala:any;};
   mensaje: string;
 
   constructor(private _Auth:AuthService, private _Router:Router, private _chatService:ChatService, private _Refresh:RefreshService) { }
 
   ngOnInit() {
     this.identidad = this._Auth.getIdentity();
-    this._chatService.getMessages().subscribe((mensaje:string)=>{
-      this.messages.push(mensaje);
+    //this._chatService.joinSala(this.roomSelcted.name);
+    this._chatService.getMessages().subscribe((mensaje:any)=>{
+      console.log(mensaje);
+      let sala = parseInt(mensaje.sala[mensaje.sala.length - 1]) - 1;
+      console.log("sala", sala);
+      this.rooms[sala].messages.push(mensaje);
     })
   }
 
@@ -40,7 +43,7 @@ export class SalasComponent implements OnInit {
     .then(respuesta=>{
       console.log(respuesta);
       this._Auth.setIdentity(respuesta);
-      this.envio = {nickname:this.identidad['nickname'], cuerpo:this.mensaje};
+      this.envio = {nickname:this.identidad['nickname'], cuerpo:this.mensaje, sala:this.roomSelcted.name};
       this._chatService.sendMessage(this.envio);
       this.mensaje = '';
     })
@@ -57,9 +60,12 @@ export class SalasComponent implements OnInit {
   sendMessage(){
     this.refres();
   }
-  
+
   selectRoom(room:any){
+    //this._chatService.leaveSala(this.roomSelcted.name);
     this.roomSelcted=room;
+    console.log(this.roomSelcted);
+    //this._chatService.joinSala(this.roomSelcted.name);
   }
 
 }
