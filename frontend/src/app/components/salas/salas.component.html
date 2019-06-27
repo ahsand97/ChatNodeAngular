@@ -5,7 +5,7 @@
     </mat-sidenav>
     <mat-sidenav-content class="sidenav-content">
       <div class="messages-content" >
-        <p *ngFor="let message of roomSelcted.messages"> {{message.cuerpo}}</p>
+        <p *ngFor="let message of roomSelcted.messages"> {{message.nickname}}: {{message.cuerpo}}</p>
       </div>
       <div class="form-content">
         <mat-form-field class="form-field" appearance="outline">

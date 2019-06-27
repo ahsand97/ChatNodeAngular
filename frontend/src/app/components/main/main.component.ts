@@ -12,8 +12,8 @@ import { RefreshService } from 'src/app/services/refresh.service';
 export class MainComponent implements OnInit {
 
   links = [
-    {path:'mensajes', label:'Mensajes'},
     {path:'salas', label:'Salas'},
+    {path:'mensajes', label:'Mensajes'},
     {path:'comunidades', label:'Comunidades'},
     {path:'eventos', label:'Eventos'},
     {path:'notificaciones', label:'Notificaciones'}

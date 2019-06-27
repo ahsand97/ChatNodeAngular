@@ -25,6 +25,7 @@ export class MensajesComponent implements OnInit {
   selectUser(user:any){
     this.userSelcted=user;
     
+    
     console.log(this.userSelcted);
   }
 

@@ -34,4 +34,12 @@ export class ChatService {
         });
     }); 
   }
+
+  public getMessagesPrivados = () => {
+    return Observable.create((observer) => {
+        this.socket.on('nuevo-mensaje-privade', (message) => {
+            observer.next(message);
+        });
+    }); 
+  }
 }

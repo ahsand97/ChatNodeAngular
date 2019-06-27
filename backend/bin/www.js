@@ -24,6 +24,14 @@ socketio.on('connection', function(socket){
         socketio.emit('nuevo-mensaje', cuerpo);
     })
 
+    socket.on('nuevo-mensaje-privade', function(cuerpo){
+        console.log(cuerpo);
+        //socketio.to(cuerpo.sala).emit('nuevo-mensaje', cuerpo);
+        //console.log("envie",cuerpo);
+        socketio.emit('nuevo-mensaje-privade', cuerpo);
+    })
+
+
     socket.on('join', function(sala){
         console.log("Se ha unido a la ", sala, socket.id);
         //socketio.in('Sala1').emit('nuevo-mensae', 'hola');
