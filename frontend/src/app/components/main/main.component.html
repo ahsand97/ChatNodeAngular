@@ -1,8 +1,17 @@
-<nav mat-tab-nav-bar mat-align-tabs="center" class="ma-tab">
+<!--<nav mat-tab-nav-bar mat-align-tabs="center" class="ma-tab">
   <a mat-tab-link *ngFor="let link of links" [routerLink]="link.path" routerLinkActive="active">
     {{link.label}}
   </a>
   <a mat-tab-link (click)="logOut()">Salir</a>
+</nav>-->
+
+<nav id="nav" class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+  <div style="width:100%; text-align: center; padding:0;">
+      <button *ngFor="let link of links" class="btn btn-primary" [routerLink]="link.path" routerLinkActive="active">{{link.label}}</button>
+  </div>
+  <div style="text-align:right; padding:0; padding-right: 2%">
+      <button class="btn btn-danger" (click)="logOut()">Salir</button>
+  </div>
 </nav>
 
 <router-outlet></router-outlet>

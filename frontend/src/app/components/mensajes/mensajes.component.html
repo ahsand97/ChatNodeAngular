@@ -1,4 +1,4 @@
-<mat-sidenav-container class="sidenav-container">
+<!--<mat-sidenav-container class="sidenav-container">
   <mat-sidenav mode="side" opened class="sidenav">
     <h3>Usuarios</h3>
     <button mat-button *ngFor="let user of users" class="button" (click)="selectUser(user)">{{user.nickname}}</button>
@@ -14,4 +14,35 @@
     </div>
     
   </mat-sidenav-content>
-</mat-sidenav-container>
+</mat-sidenav-container>-->
+
+
+<body>
+    <div class="d-flex" id="wrapper">
+
+      <div class="bg-light border-right" id="sidebar-wrapper">
+          <h3 style="text-align: center; width: 100%; color:blue;">Usuarios</h3>
+        <div class="list-group list-group-flush" style="text-align: center;">
+          <button style="color: #3A01DF;" *ngFor="let user of users" class="list-group-item list-group-item-action bg-light botones" (click)="any()"><h2>{{user.nickname}}<h6>{{user.nombre}}</h6></h2></button>
+        </div>
+      </div>
+      <div id="page-content-wrapper">
+
+            <div class="messages-content" >
+              <!--<h1 style="text-align: center; opacity: 0.3;">Mensajes {{roomSelcted.name}}</h1>
+              <h4 *ngFor="let message of roomSelcted.messages">->{{message.nickname}}:<h6 style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color:brown; margin-left: 28px;">{{message.cuerpo}}</h6></h4>-->
+            </div>
+            <div class="form-content">
+              <mat-form-field class="form-field" appearance="outline">
+                <input matInput type="text" class="mensaje" [(ngModel)]="mensaje" (keyup)="$event.keyCode == 13 && sendMessage()">
+              </mat-form-field>
+              <button mat-raised-button (click)="sendMessage()">Enviar</button>
+            </div>
+      </div>
+      </div>
+      <!-- /#page-content-wrapper -->
+
+    <!-- /#wrapper -->
+  
+  
+</body>

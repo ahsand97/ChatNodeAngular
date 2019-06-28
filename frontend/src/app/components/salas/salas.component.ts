@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { Router } from '@angular/router';
@@ -9,14 +9,14 @@ import { RefreshService } from 'src/app/services/refresh.service';
   templateUrl: './salas.component.html',
   styleUrls: ['./salas.component.css']
 })
-export class SalasComponent implements OnInit {
+export class SalasComponent implements OnInit, OnDestroy {
 
   rooms = [
-    {name:"Sala1", messages: []},
-    {name:"Sala2", messages: []},
-    {name:"Sala3", messages: []},
-    {name:"Sala4", messages: []},
-    {name:"Sala5", messages: []}
+    {name:"Sala 1", messages: [] },
+    {name:"Sala 2", messages: [] },
+    {name:"Sala 3", messages: [] },
+    {name:"Sala 4", messages: [] },
+    {name:"Sala 5", messages: [] }
   ];
 
   roomSelcted:any = this.rooms[0];
@@ -29,13 +29,17 @@ export class SalasComponent implements OnInit {
 
   ngOnInit() {
     this.identidad = this._Auth.getIdentity();
-    //this._chatService.joinSala(this.roomSelcted.name);
+    this._chatService.enviarIdentidadalConectar(this.roomSelcted.name, {nickname:this.identidad['nickname'], nombre:this.identidad['nombre']});
     this._chatService.getMessages().subscribe((mensaje:any)=>{
       console.log(mensaje);
       let sala = parseInt(mensaje.sala[mensaje.sala.length - 1]) - 1;
-      console.log("sala", sala);
       this.rooms[sala].messages.push(mensaje);
-    })
+    });
+    window.onbeforeunload = () => this.ngOnDestroy();
+  }
+
+  ngOnDestroy() {
+    this._chatService.enviarIdentidadalDesconectar(this.roomSelcted.name ,{nickname: this.identidad['nickname'], nombre: this.identidad['nombre']});
   }
 
   refres(){

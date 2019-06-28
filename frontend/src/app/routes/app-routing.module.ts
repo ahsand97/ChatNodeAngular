@@ -29,8 +29,9 @@ const routes: Routes = [
     path:'principal', component:PrincipalComponent, canActivate:[GuardService], data:{'destino':['principal']}
   },
   {
-    path:'main', component:MainComponent, 
+    path:'main', component:MainComponent, canActivate:[GuardService], data:{'destino':['main']},
       children:[
+        {path:'', redirectTo:'salas', pathMatch:'full'},
         {path:'salas', component:SalasComponent},
         {path:'comunidades', component:ComunidadesComponent},
         {path:'eventos', component:EventosComponent},

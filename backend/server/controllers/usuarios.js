@@ -55,13 +55,30 @@ function login(req,res){
 }
 
 function getAll(req,res){
-    usuarios.findAll()
-    .then(usuarios=>{
-        res.status(200).send({usuarios});
-    })
-    .catch(err=>{
-        res.status(500).send({message: "Ocurrió un error al buscar los usuarios."});
-    })
+    if(!req.headers.authorization){
+        return res.status(403).send({message: "La petición no tiene la cabecera de autenticación."});
+    }
+    else{
+        var token=req.headers.authorization.replace(/['"]+/g,'');
+        var payload=nJwt.verify(token, secret,(err,verifiedJwt)=>{
+            if(err){
+            }else{
+                usuarios.findAll()
+                .then(usuarios=>{
+                    let usuariosEnvio=[];
+                    for (let usuario of usuarios){
+                        usuarioCiclo={nickname:usuario.nickname, nombre:usuario.nombre};
+                        usuariosEnvio.push(usuarioCiclo);
+                    }
+
+                    res.status(200).send({usuariosEnvio});
+                })
+                .catch(err=>{
+                    res.status(500).send({message: "Ocurrió un error al buscar los usuarios."});
+                })
+            }
+        })
+    }
 }
 
 
