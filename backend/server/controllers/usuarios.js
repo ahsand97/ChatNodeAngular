@@ -104,6 +104,7 @@ function getAll(req,res){
 }
 
 function changeRoom(req,res){
+    console.log('cambioSala');  
     if(!req.headers.authorization){
         return res.status(403).send({message: "La petición no tiene la cabecera de autenticación."});
     }
