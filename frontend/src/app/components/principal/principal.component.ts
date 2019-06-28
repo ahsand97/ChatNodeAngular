@@ -33,8 +33,9 @@ export class PrincipalComponent implements OnInit {
       console.log(error);
       let errorhandler = error.json();
       if(errorhandler['id'] == '1'){
-      this._Auth.logOut();
-      this._Router.navigate(['/login']);
+        this._Auth.logoutToDB();
+        this._Auth.logOut();
+        this._Router.navigate(['/login']);
       }
     });
   }

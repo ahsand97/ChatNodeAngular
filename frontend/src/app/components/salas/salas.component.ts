@@ -77,8 +77,7 @@ export class SalasComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this._chatService.enviarIdentidadalDesconectar(this.roomSelcted.name ,{nickname: this.identidad['nickname'], nombre: this.identidad['nombre']});
-    this._GetUsersService.changeRoomUser(this.identidad, "Sala 1");
-    console.log('hijo destruido');
+    this._Auth.logoutToDB();
   }
 
   refres(){

@@ -34,9 +34,6 @@ export class AuthService {
     this._logout.logout(identity)
     .then(respuesta=>{
       console.log(respuesta);
-      localStorage.removeItem('identidad_usuario');
-      localStorage.clear();
-      this._router.navigate(['/login']);
     })
     .catch(error=>{
       console.log(error);
