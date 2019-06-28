@@ -77,7 +77,7 @@ export class SalasComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this._chatService.enviarIdentidadalDesconectar(this.roomSelcted.name ,{nickname: this.identidad['nickname'], nombre: this.identidad['nombre']});
-    this._Auth.logoutToDB();
+    this._Auth.logoutToDB(); 
   }
 
   refres(){
@@ -107,7 +107,7 @@ export class SalasComponent implements OnInit, OnDestroy {
     console.log('primeroFuncion');
     //this._chatService.leaveSala(this.roomSelcted.name);
     this._chatService.enviarIdentidadalDesconectar(this.roomSelcted.name ,{nickname: this.identidad['nickname'], nombre: this.identidad['nombre']});
-    this.roomSelcted.users=[]
+    this.roomSelcted.users=[];
     this.roomSelcted=room;
     this._GetUsersService.getUsers(this.identidad, this.roomSelcted.name)
     .then(respuesta=>{

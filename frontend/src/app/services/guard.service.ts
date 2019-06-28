@@ -41,7 +41,7 @@ export class GuardService implements CanActivate{
           console.log(error);
           let errorhandler = error.json();
           if(errorhandler['id'] == '1'){
-            this._auth.logOut();
+            this._auth.logoutToDB();
             this._router.navigate(['/login']);
           }
         })
