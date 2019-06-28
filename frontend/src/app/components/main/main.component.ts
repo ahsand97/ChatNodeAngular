@@ -14,9 +14,7 @@ export class MainComponent implements OnInit, OnDestroy {
   links = [
     {path:'salas', label:'Salas'},
     {path:'mensajes', label:'Mensajes'},
-    {path:'comunidades', label:'Comunidades'},
-    {path:'eventos', label:'Eventos'},
-    {path:'notificaciones', label:'Notificaciones'}
+    {path:'comunidades', label:'Comunidades'}
     
   ]
 

@@ -1,3 +1,27 @@
-<p>
-  comunidades works!
-</p>
+<body>
+    <div class="d-flex" id="wrapper">
+
+      <div class="bg-light border-right" id="sidebar-wrapper">
+          <h3 style="text-align: center; width: 100%; color:blue;">Salas</h3>
+        <div class="list-group list-group-flush" style="text-align: center;">
+          <button style="color: #3A01DF;" *ngFor="let community of communities" class="list-group-item list-group-item-action bg-light botones" [attr.id]="community.nombre" (click)="SelectCommunity(community)"><h2>{{community.nombre}}</h2></button>
+        </div>
+      </div>
+      <div id="page-content-wrapper">
+
+            <div class="messages-content" >
+              <h1 style="text-align: center; opacity: 0.3;">Eventos {{communitySelected.nombre}}</h1>
+              <!--<h4 *ngFor="let event of communitySelected.events">->{{event.name}}:<h6 style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color:brown; margin-left: 28px;">{{message.cuerpo}}</h6></h4>-->
+              <div class="form-content">
+                <button mat-raised-button (click)="sendMessage()">Enviar</button>
+              </div>
+            </div>
+            
+      </div>
+      </div>
+      <!-- /#page-content-wrapper -->
+
+    <!-- /#wrapper -->
+  
+  
+</body>
