@@ -32,6 +32,13 @@ socketio.on('connection', function(socket){
         socketio.emit('nuevo-mensaje', cuerpo);
     });
 
+    socket.on('nuevo-evento', function(cuerpo){
+        console.log(cuerpo);
+        //socketio.to(cuerpo.sala).emit('nuevo-mensaje', cuerpo);
+        //console.log("envie",cuerpo);
+        socket.broadcast.emit('nuevo-evento', cuerpo);
+    });
+
     socket.on('nuevo-mensaje-privade', function(cuerpo){
         console.log(cuerpo);
         //socketio.to(cuerpo.sala).emit('nuevo-mensaje', cuerpo);

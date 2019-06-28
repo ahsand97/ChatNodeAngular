@@ -10,3 +10,7 @@
 .navbar-inner {
     background:transparent;
 }
+
+.content{
+    overflow: hidden;
+}

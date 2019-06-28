@@ -19,6 +19,7 @@ app.use((req,res,next)=>{
 //Rutas
 require('./server/routes/usuarios')(app);
 require('./server/routes/comunidades')(app);
+require('./server/routes/eventos')(app);
 app.get('*', (req,res)=>{
     res.status(200).send({message: "Bienvenido al backend"});
 });

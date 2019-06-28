@@ -15,15 +15,15 @@ module.exports=(sequelize, DataTypes)=>{
             type: DataTypes.STRING,
             allowNull: true
         },
-        Fecha:{
+        fecha:{
             type: DataTypes.STRING,
             allowNull: false
         },
-        Hora:{
+        hora:{
             type: DataTypes.STRING,
             allowNull: false
         },
-        Lugar:{
+        lugar:{
             type: DataTypes.STRING,
             allowNull: false
         },

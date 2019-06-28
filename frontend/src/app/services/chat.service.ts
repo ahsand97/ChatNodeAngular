@@ -19,6 +19,10 @@ export class ChatService {
     this.socket.emit('nuevo-mensaje', cuerpo);
   }
 
+  sendEvent(message:any){
+    this.socket.emit('nuevo-evento', message);
+  }
+
   enviarIdentidadalConectar(sala:any, cuerpo:any){
     this.socket.emit('usuario-conectado', {nickname: cuerpo['nickname'], nombre:cuerpo['nombre'], sala:sala});
   }
@@ -38,6 +42,14 @@ export class ChatService {
   public getMessages = () => {
     return Observable.create((observer) => {
         this.socket.on('nuevo-mensaje', (message) => {
+            observer.next(message);
+        });
+    }); 
+  }
+
+  public getNotifications = () => {
+    return Observable.create((observer) => {
+        this.socket.on('nuevo-evento', (message) => {
             observer.next(message);
         });
     }); 

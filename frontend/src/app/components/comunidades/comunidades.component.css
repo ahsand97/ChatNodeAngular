@@ -67,14 +67,13 @@
 
 
 .messages-content {
-	height: 80%;
-    width: 70%;
+    width: 90%;
     margin-left: 20px;
     margin-top: 20px;
     overflow-y: auto;
     overflow-x: hidden;
     border-radius: 2%;
-    background-color: transparent
+    background-color: transparent;
 }
 
 h3,h1,h4 {
@@ -108,3 +107,13 @@ h2{
                  0 8px 10px rgba(0,0,0,.15);
   }
 
+.show-event{
+  width: 50%;
+}
+
+.create-event{
+  position: relative;
+  text-align: center;
+  margin-top: 5%;
+  width: 50%;
+}

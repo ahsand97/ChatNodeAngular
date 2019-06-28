@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { RefreshService } from 'src/app/services/refresh.service';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-main',
@@ -23,7 +24,13 @@ export class MainComponent implements OnInit, OnDestroy {
   messages: string[] = [];
   envio:any;
 
-  constructor(private _Auth:AuthService, private _Router:Router, private _chatService:ChatService, private _Refresh:RefreshService) { }
+  constructor(
+    private _Auth:AuthService, 
+    private _Router:Router, 
+    private _chatService:ChatService, 
+    private _Refresh:RefreshService,
+    private _snackBar: MatSnackBar
+    ) { }
 
   refresh(){
     this._Refresh.refresh(this.identidad)
@@ -46,8 +53,9 @@ export class MainComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.identidad = this._Auth.getIdentity();
-    this._chatService.getMessages().subscribe((mensaje:string)=>{
-      this.messages.push(mensaje);
+    this._chatService.getNotifications().subscribe((mensaje:any)=>{
+      //this.messages.push(mensaje);
+      this.openSnackBar('Nuevo evento en la comunidad '+mensaje.nombreComunidad_FK,'Ir a comunidades')
     });
     window.onbeforeunload = () => this.ngOnDestroy();
   }
@@ -63,6 +71,21 @@ export class MainComponent implements OnInit, OnDestroy {
 
   logOut(){
     this._Auth.logoutToDB();
+  }
+
+  openSnackBar(message: string, action: string) {
+    let SnackBarRef = this._snackBar.open(message, action, {
+      duration: 4000,
+    });
+
+    SnackBarRef.onAction().subscribe(data =>{
+      console.log('snackBarWasClicked');
+      this._Router.navigate(['/main/comunidades']);
+    })
+
+    SnackBarRef.afterDismissed().subscribe(data=>{
+      console.log('snackBarDissmised');
+    })
   }
 
 }
