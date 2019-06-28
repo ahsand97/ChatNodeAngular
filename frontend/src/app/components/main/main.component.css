@@ -1,3 +1,12 @@
-.ma-tab{
-    background-color: rgba(220, 120, 220, 0.7)
+.btn-primary {
+    border-radius: 4px;
+    margin: 3px;
+  }
+
+#botonSalir{
+    float: right;
+}
+
+.navbar-inner {
+    background:transparent;
 }

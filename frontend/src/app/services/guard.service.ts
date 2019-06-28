@@ -19,7 +19,7 @@ export class GuardService implements CanActivate{
         .then(respuesta=>{
           console.log(respuesta);
           this._auth.setIdentity(respuesta);
-          this._router.navigate(['/principal']);
+          this._router.navigate(['/main']);
         })
         .catch(error=>{
           console.log(error);
@@ -30,7 +30,7 @@ export class GuardService implements CanActivate{
           }
         });
       }
-      else if(destino[0] == 'principal'){
+      else if(destino[0] == 'principal' || destino[0] == 'main'){
         this._refresh.refresh(identidad)
         .then(respuesta=>{
           console.log(respuesta);

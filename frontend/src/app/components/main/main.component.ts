@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { ChatService } from 'src/app/services/chat.service';
@@ -9,7 +9,7 @@ import { RefreshService } from 'src/app/services/refresh.service';
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
-export class MainComponent implements OnInit {
+export class MainComponent implements OnInit, OnDestroy {
 
   links = [
     {path:'salas', label:'Salas'},
@@ -27,7 +27,7 @@ export class MainComponent implements OnInit {
 
   constructor(private _Auth:AuthService, private _Router:Router, private _chatService:ChatService, private _Refresh:RefreshService) { }
 
-  refres(){
+  refresh(){
     this._Refresh.refresh(this.identidad)
     .then(respuesta=>{
       console.log(respuesta);
@@ -50,11 +50,17 @@ export class MainComponent implements OnInit {
     this.identidad = this._Auth.getIdentity();
     this._chatService.getMessages().subscribe((mensaje:string)=>{
       this.messages.push(mensaje);
-    })
+    });
+    window.onbeforeunload = () => this.ngOnDestroy();
+  }
+
+  ngOnDestroy() {
+    console.log("padre destruido.");
+    this._chatService.enviarIdentidadalDesconectar(null,{nickname: this.identidad['nickname'], nombre: this.identidad['nombre']});
   }
 
   sendMessage(){
-    this.refres();
+    this.refresh();
   }
 
   logOut(){

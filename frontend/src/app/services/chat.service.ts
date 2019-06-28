@@ -19,6 +19,14 @@ export class ChatService {
     this.socket.emit('nuevo-mensaje', cuerpo);
   }
 
+  enviarIdentidadalConectar(sala:any, cuerpo:any){
+    this.socket.emit('usuario-conectado', {nickname: cuerpo['nickname'], nombre:cuerpo['nombre'], sala:sala});
+  }
+
+  enviarIdentidadalDesconectar(sala:any, cuerpo:any){
+    this.socket.emit('usuario-desconectado', {nickname: cuerpo['nickname'], nombre:cuerpo['nombre'], sala:sala});
+  }
+
   joinSala(cuerpo:any){
     this.socket.emit('join', cuerpo);
   }
@@ -42,4 +50,5 @@ export class ChatService {
         });
     }); 
   }
+
 }
