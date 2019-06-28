@@ -18,10 +18,12 @@ socketio.on('connection', function(socket){
     });
 
     socket.on('usuario-conectado', function(cuerpo){
+        socketio.emit('usuario-conectado', cuerpo);
         console.log('conectado', cuerpo);
     });
 
     socket.on('usuario-desconectado', function(cuerpa){
+        socketio.emit('usuario-desconectado', cuerpa);
         console.log('desconectado', cuerpa);
     });
 

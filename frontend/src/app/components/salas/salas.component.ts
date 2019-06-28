@@ -3,6 +3,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { Router } from '@angular/router';
 import { RefreshService } from 'src/app/services/refresh.service';
+import { GetUsersService } from 'src/app/services/get-users.service';
 
 @Component({
   selector: 'app-salas',
@@ -12,34 +13,72 @@ import { RefreshService } from 'src/app/services/refresh.service';
 export class SalasComponent implements OnInit, OnDestroy {
 
   rooms = [
-    {name:"Sala 1", messages: [] },
-    {name:"Sala 2", messages: [] },
-    {name:"Sala 3", messages: [] },
-    {name:"Sala 4", messages: [] },
-    {name:"Sala 5", messages: [] }
+    {name:"Sala 1", messages: [], users:[] },
+    {name:"Sala 2", messages: [], users:[] },
+    {name:"Sala 3", messages: [], users:[] },
+    {name:"Sala 4", messages: [], users:[] },
+    {name:"Sala 5", messages: [], users:[] }
   ];
-
   roomSelcted:any = this.rooms[0];
   //messages:string[] = [];
   identidad:any;
   envio: { nickname: any; cuerpo: any; sala:any;};
   mensaje: string;
 
-  constructor(private _Auth:AuthService, private _Router:Router, private _chatService:ChatService, private _Refresh:RefreshService) { }
+
+
+  constructor(private _GetUsersService:GetUsersService, private _Auth:AuthService, private _Router:Router, private _chatService:ChatService, private _Refresh:RefreshService) { }
 
   ngOnInit() {
     this.identidad = this._Auth.getIdentity();
     this._chatService.enviarIdentidadalConectar(this.roomSelcted.name, {nickname:this.identidad['nickname'], nombre:this.identidad['nombre']});
     this._chatService.getMessages().subscribe((mensaje:any)=>{
-      console.log(mensaje);
       let sala = parseInt(mensaje.sala[mensaje.sala.length - 1]) - 1;
       this.rooms[sala].messages.push(mensaje);
     });
+    this._chatService.getUsersConectedSala().subscribe((mensaje:any)=>{
+      if(mensaje.nickname != this.identidad.nickname){
+        let sala = parseInt(mensaje.sala[mensaje.sala.length - 1]) - 1;
+        if(this.rooms[sala].users.length == 0){
+          this.rooms[sala].users.push({nickname: mensaje.nickname, nombre: mensaje.nombre});
+        }
+        else{
+          for(let usuario=0; usuario < this.rooms[sala].users.length; usuario++){
+            if(mensaje.nickname != this.rooms[sala].users[usuario].nickname){
+              this.rooms[sala].users.push({nickname: mensaje.nickname, nombre: mensaje.nombre});
+            }
+          }
+        }
+      }
+    });
+    this._chatService.getUsersDisconectedSala().subscribe((mensaje:any)=>{
+      if(mensaje.nickname != this.identidad.nickname){
+        let sala = parseInt(mensaje.sala[mensaje.sala.length - 1]) - 1;
+        for(let usuario=0; usuario < this.rooms[sala].users.length; usuario++){
+          if(mensaje.nickname == this.rooms[sala].users[usuario].nickname){
+            this.rooms[sala].users.splice(usuario,1);
+          }
+        }
+       }
+    });
+    this._GetUsersService.getUsers(this.identidad, this.roomSelcted.name)
+    .then(respuesta=>{
+      for(let usuario of respuesta['usuariosEnvio']){
+        if(this.identidad.nickname != usuario.nickname){
+          this.roomSelcted.users.push(usuario);
+        }
+      }
+    })
+    .catch(error=>{
+      console.log(error);
+    })
     window.onbeforeunload = () => this.ngOnDestroy();
   }
 
   ngOnDestroy() {
     this._chatService.enviarIdentidadalDesconectar(this.roomSelcted.name ,{nickname: this.identidad['nickname'], nombre: this.identidad['nombre']});
+    this._GetUsersService.changeRoomUser(this.identidad, "Sala 1");
+    console.log('hijo destruido');
   }
 
   refres(){
@@ -66,9 +105,23 @@ export class SalasComponent implements OnInit, OnDestroy {
   }
 
   selectRoom(room:any){
+    console.log('primeroFuncion');
     //this._chatService.leaveSala(this.roomSelcted.name);
+    this._chatService.enviarIdentidadalDesconectar(this.roomSelcted.name ,{nickname: this.identidad['nickname'], nombre: this.identidad['nombre']});
+    this.roomSelcted.users=[]
     this.roomSelcted=room;
-    console.log(this.roomSelcted);
+    this._GetUsersService.getUsers(this.identidad, this.roomSelcted.name)
+    .then(respuesta=>{
+      for(let usuario of respuesta['usuariosEnvio']){
+        this._chatService.enviarIdentidadalConectar(this.roomSelcted.name, {nickname:usuario.nickname, nombre:usuario.nombre});
+      }
+    })
+    .catch(error=>{
+      console.log('error', error);
+    })
+    this._GetUsersService.changeRoomUser(this.identidad, this.roomSelcted.name);
+    this._chatService.enviarIdentidadalConectar(this.roomSelcted.name, {nickname:this.identidad['nickname'], nombre:this.identidad['nombre']});
+   
     //this._chatService.joinSala(this.roomSelcted.name);
   }
 

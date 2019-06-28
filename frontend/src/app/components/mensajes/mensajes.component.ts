@@ -20,7 +20,7 @@ export class MensajesComponent implements OnInit {
 
   ngOnInit() {
     this.identidad = this._Auth.getIdentity();
-    this._getUsers.getUsers(this.identidad)
+    this._getUsers.getUsers(this.identidad,null)
     .then(respuesta=>{
       for (let usuario of respuesta['usuariosEnvio']){
         this.users.push(usuario);

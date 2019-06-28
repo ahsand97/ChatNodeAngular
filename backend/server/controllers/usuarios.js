@@ -63,18 +63,69 @@ function getAll(req,res){
         var payload=nJwt.verify(token, secret,(err,verifiedJwt)=>{
             if(err){
             }else{
-                usuarios.findAll()
-                .then(usuarios=>{
-                    let usuariosEnvio=[];
-                    for (let usuario of usuarios){
-                        usuarioCiclo={nickname:usuario.nickname, nombre:usuario.nombre};
-                        usuariosEnvio.push(usuarioCiclo);
-                    }
+                if(req.body.sala){
+                    usuarios.findAll({
+                        where:{
+                            nombre_sala_FK: req.body.sala,
+                            estado: true
+                        }
+                    })
+                    .then(usuarios=>{
+                        let usuariosEnvio=[];
+                        for (let usuario of usuarios){
+                            usuarioCiclo={nickname:usuario.nickname, nombre:usuario.nombre};
+                            usuariosEnvio.push(usuarioCiclo);
+                        }
+                        res.status(200).send({usuariosEnvio});
+                    })
+                    .catch(err=>{
+                        res.status(500).send({message: "Ocurrió un error al buscar los usuarios."});
+                    })
+                }
+                else{
+                    usuarios.findAll()
+                    .then(usuarios=>{
+                        let usuariosEnvio=[];
+                        for (let usuario of usuarios){
+                            usuarioCiclo={nickname:usuario.nickname, nombre:usuario.nombre};
+                            usuariosEnvio.push(usuarioCiclo);
+                        }
 
-                    res.status(200).send({usuariosEnvio});
+                        res.status(200).send({usuariosEnvio});
+                    })
+                    .catch(err=>{
+                        res.status(500).send({message: "Ocurrió un error al buscar los usuarios."});
+                    })
+                }
+                
+            }
+        })
+    }
+}
+
+function changeRoom(req,res){
+    if(!req.headers.authorization){
+        return res.status(403).send({message: "La petición no tiene la cabecera de autenticación."});
+    }
+    else{
+        var token=req.headers.authorization.replace(/['"]+/g,'');
+        var payload=nJwt.verify(token, secret,(err,verifiedJwt)=>{
+            if(err){
+            }else{
+                usuarios.findOne({
+                    where:{
+                        nickname: req.body.nickname
+                    }
+                })
+                .then(usuario=>{
+                    if(usuario){
+                        db.sequelize.query("UPDATE \"Usuarios\" SET \"nombre_sala_FK\" = '"+req.body.sala+"' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+                        return res.status(200).send({message:'Sala cambiada.'});
+                    }
+                    return res.status(401).send({id: '1', message: "Acceso no autorizado."});
                 })
                 .catch(err=>{
-                    res.status(500).send({message: "Ocurrió un error al buscar los usuarios."});
+                    res.status(500).send({id: '2', message: "Ocurrió un error al buscar el usuario."});
                 })
             }
         })
@@ -99,6 +150,7 @@ function logout(req,res){
                 .then(usuario=>{
                     if(usuario){
                         db.sequelize.query("UPDATE \"Usuarios\" SET \"estado\" = \'false\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+                        db.sequelize.query("UPDATE \"Usuarios\" SET \"nombre_sala_FK\" = \'Sala 1\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
                         return res.status(200).send({message:'Sesión finalizada.'});
                     }
                     return res.status(401).send({id: '1', message: "Acceso no autorizado."});
@@ -147,5 +199,6 @@ module.exports={
     login,
     getAll,
     logout,
-    newToken
+    newToken,
+    changeRoom
 }

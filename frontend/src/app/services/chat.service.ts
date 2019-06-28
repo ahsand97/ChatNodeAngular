@@ -47,6 +47,22 @@ export class ChatService {
     }); 
   }
 
+  public getUsersConectedSala = () => {
+    return Observable.create((observer) => {
+        this.socket.on('usuario-conectado', (message) => {
+            observer.next(message);
+        });
+    }); 
+  }
+
+  public getUsersDisconectedSala = () => {
+    return Observable.create((observer) => {
+        this.socket.on('usuario-desconectado', (message) => {
+            observer.next(message);
+        });
+    }); 
+  }
+
   public getNotifications = () => {
     return Observable.create((observer) => {
         this.socket.on('nuevo-evento', (message) => {

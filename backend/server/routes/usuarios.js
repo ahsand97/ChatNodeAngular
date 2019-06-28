@@ -7,4 +7,5 @@ module.exports=(app)=>{
     app.post('/api/logout', usuariosController.logout);
     app.post('/api/refresh', usuariosController.newToken);
     app.post('/api/usuarios', usuariosController.getAll);
+    app.post('/api/changeroom', usuariosController.changeRoom);
 }

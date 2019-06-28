@@ -20,7 +20,7 @@ module.exports=(sequelize, DataTypes)=>{
         },
         nombre_sala_FK:{
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             defaultValue: 'Sala 1',
             references: {
                 model: 'Salas',
