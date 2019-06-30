@@ -15,6 +15,22 @@ function getAll(req,res){
         var token=req.headers.authorization.replace(/['"]+/g,'');
         var payload=nJwt.verify(token, secret,(err,verifiedJwt)=>{
             if(err){
+                usuarios.findOne({
+                    where:{
+                        nickname: req.body.nickname
+                    }
+                })
+                .then(usuario=>{
+                    if(usuario){
+                        db.sequelize.query("UPDATE \"Usuarios\" SET \"nombre_sala_FK\" = \'SalaNull\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+                        db.sequelize.query("UPDATE \"Usuarios\" SET \"estado\" = \'false\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+                    }
+                    return res.status(401).send({id: '1', message: "Acceso no autorizado."});
+                })
+                .catch(err=>{
+                    res.status(500).send({id: '2', message: "Ocurrió un error al buscar el usuario."});
+                })
+                return res.status(401).send({id: '1', message: "Acceso no autorizado."});
             }else{
                 comunidades.findAll()
                 .then(comunidades=>{

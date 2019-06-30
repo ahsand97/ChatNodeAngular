@@ -45,7 +45,6 @@ export class MainComponent implements OnInit, OnDestroy {
       console.log(error);
       let errorhandler = error.json();
       if(errorhandler['id'] == '1'){
-        this._Auth.logoutToDB();
         this._Auth.logOut();
         this._Router.navigate(['/login']);
       }
@@ -72,6 +71,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
   logOut(){
     this._Auth.logoutToDB();
+    this._Auth.logOut();
     this._Router.navigate(['/login']);
   }
 

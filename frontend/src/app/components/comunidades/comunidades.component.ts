@@ -36,7 +36,10 @@ export class ComunidadesComponent implements OnInit {
       console.log("Comunidad ", this.communities);
     })
     .catch(error=>{
-      console.log(error);
+      console.log('errorServer', error);
+      this._Auth.logoutToDB();
+      this._Auth.logOut();
+      this._Router.navigate(['/login']);
     })
 
     this.identidad = this._Auth.getIdentity();
@@ -80,8 +83,8 @@ export class ComunidadesComponent implements OnInit {
       console.log(error);
       let errorhandler = error.json();
       if(errorhandler['id'] == '1'){
-      this._Auth.logOut();
-      this._Router.navigate(['/login']);
+        this._Auth.logOut();
+        this._Router.navigate(['/login']);
       }
     });
   }

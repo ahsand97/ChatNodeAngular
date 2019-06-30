@@ -1,32 +1,41 @@
 <body>
     <div class="d-flex" id="wrapper">
       <div class="bg-light border-right" id="sidebar-wrapper">
-        <h3 style="text-align: center; width: 100%; color:blue;">Salas</h3>
+        <h3 style="text-align:center; color:blue;">Salas</h3>
         <div class="list-group list-group-flush" style="text-align: center;">
-          <button style="color: #3A01DF;" *ngFor="let room of rooms" class="list-group-item list-group-item-action bg-light botones" [attr.id]="room.name" (click)="selectRoom(room)"><h2>{{room.name}}</h2></button>
+          <button style="text-align: center; color: #3A01DF;" *ngFor="let room of rooms" class="list-group-item list-group-item-action bg-light botones" [attr.id]="room.name" (click)="selectRoom(room)"><h2>{{room.name}}</h2></button>
         </div>
         <h3 style="text-align: center; width: 100%; color:blue;">Usuarios Conectados</h3>
-        <div class="list-group list-group-flush" style="text-align: center;">
-          <h2 style="color: #3A01DF;" *ngFor="let user of roomSelcted.users" class="list-group-item list-group-item-action bg-light botones">{{user.nickname}}<h6>{{user.nombre}}</h6></h2>
+        <div class="list-group list-group-flush" style="text-align: center; overflow-y: auto;">
+          <h2 style="color:#b4542b; display: inline;" *ngFor="let user of roomSelcted.users" class="list-group-item list-group-item-action bg-light botones">Nickname: <h2 style="color:darkslategrey; display: inline;">{{user.nickname}}</h2><h6 style="color: #b4542b;">Nombre: <h6 style="color: darkslategrey; display: inline;">{{user.nombre}}</h6></h6></h2>
         </div>
       </div>
+      
       <div id="page-content-wrapper">
 
             <div class="messages-content" >
               <h1 style="text-align: center; opacity: 0.3;">Mensajes {{roomSelcted.name}}</h1>
-              <h4 *ngFor="let message of roomSelcted.messages">->{{message.nickname}}:<h6 style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color:brown; margin-left: 28px;">{{message.cuerpo}}</h6></h4>
+              <br>
+              <ng-container *ngFor="let message of roomSelcted.messages">
+                <ng-container *ngIf="message.nickname === identidad.nickname; else condicionFalsa">
+                  <h4 style="text-align: right; padding-right: 20px;">->{{message.nickname}}:<h6 style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color:brown; margin-left: 28px;">{{message.cuerpo}}</h6></h4>
+                </ng-container>
+                <ng-template #condicionFalsa>
+                  <h4 style="padding-left: 20px;">->{{message.nickname}}:<h6 style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color:brown; margin-left: 28px;">{{message.cuerpo}}</h6></h4>
+                </ng-template>
+              </ng-container>
             </div>
-            <div class="form-content">
-              <mat-form-field class="form-field" appearance="outline">
-                <input matInput type="text" class="mensaje" [(ngModel)]="mensaje" (keyup)="$event.keyCode == 13 && sendMessage()">
-              </mat-form-field>
-              <button mat-raised-button (click)="sendMessage()">Enviar</button>
-            </div>
+            <form [formGroup]="mensajeForm" (ngSubmit)="sendMessage()" autocomplete="off">
+              <div class="form-content">
+                <mat-form-field class="form-field" appearance="outline">
+                  <input matInput type="text" class="mensaje" formControlName="mensaje" placeholder="Escribe un mensaje">
+                </mat-form-field>
+                <button mat-raised-button color="warn" type="submit" [disabled]="!mensajeForm.valid">Enviar</button>
+              </div>
+            </form>
+            
       </div>
       </div>
-      <!-- /#page-content-wrapper -->
-
-    <!-- /#wrapper -->
   
   
 </body>

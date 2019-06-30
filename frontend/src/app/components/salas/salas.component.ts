@@ -4,6 +4,7 @@ import { ChatService } from 'src/app/services/chat.service';
 import { Router } from '@angular/router';
 import { RefreshService } from 'src/app/services/refresh.service';
 import { GetUsersService } from 'src/app/services/get-users.service';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-salas',
@@ -11,6 +12,7 @@ import { GetUsersService } from 'src/app/services/get-users.service';
   styleUrls: ['./salas.component.css']
 })
 export class SalasComponent implements OnInit, OnDestroy {
+  mensajeForm: FormGroup;
 
   rooms = [
     {name:"Sala 1", messages: [], users:[] },
@@ -27,7 +29,7 @@ export class SalasComponent implements OnInit, OnDestroy {
 
 
 
-  constructor(private _GetUsersService:GetUsersService, private _Auth:AuthService, private _Router:Router, private _chatService:ChatService, private _Refresh:RefreshService) { }
+  constructor(private _GetUsersService:GetUsersService, private _Auth:AuthService, private _Router:Router, private _chatService:ChatService, private _Refresh:RefreshService, private _formBuilder:FormBuilder) { }
 
   ngOnInit() {
     this.identidad = this._Auth.getIdentity();
@@ -72,15 +74,22 @@ export class SalasComponent implements OnInit, OnDestroy {
     .catch(error=>{
       console.log(error);
     })
+
+    this.mensajeForm = this._formBuilder.group({
+      mensaje: ['']
+    });
+
     window.onbeforeunload = () => this.ngOnDestroy();
   }
 
+  get message() { return this.mensajeForm.get('mensaje'); }
+
   ngOnDestroy() {
     this._chatService.enviarIdentidadalDesconectar(this.roomSelcted.name ,{nickname: this.identidad['nickname'], nombre: this.identidad['nombre']});
-    this._Auth.logoutToDB(); 
+    this._GetUsersService.changeRoomUser(this.identidad, 'SalaNull');
   }
 
-  refres(){
+  refresh(){
     this._Refresh.refresh(this.identidad)
     .then(respuesta=>{
       console.log(respuesta);
@@ -100,11 +109,14 @@ export class SalasComponent implements OnInit, OnDestroy {
   }
 
   sendMessage(){
-    this.refres();
+    this.mensaje = this.message.value
+    if(this.mensaje.length != 0){
+      this.refresh();
+    }
+    this.mensajeForm.patchValue({mensaje: ''})
   }
 
   selectRoom(room:any){
-    console.log('primeroFuncion');
     //this._chatService.leaveSala(this.roomSelcted.name);
     this._chatService.enviarIdentidadalDesconectar(this.roomSelcted.name ,{nickname: this.identidad['nickname'], nombre: this.identidad['nombre']});
     this.roomSelcted.users=[];

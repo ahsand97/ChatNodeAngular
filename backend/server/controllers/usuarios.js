@@ -41,6 +41,7 @@ function login(req,res){
     .then(usuario=>{
         if(usuario){
             db.sequelize.query("UPDATE \"Usuarios\" SET \"estado\" = \'true\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+            db.sequelize.query("UPDATE \"Usuarios\" SET \"nombre_sala_FK\" = \'Sala 1\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
             var token = jwt.createToken(usuario, false);
             usuarioEnvio = {token: token, nickname: usuario.dataValues['nickname'], nombre: usuario.dataValues['nombre']}
             res.status(200).send(usuarioEnvio);
@@ -62,6 +63,24 @@ function getAll(req,res){
         var token=req.headers.authorization.replace(/['"]+/g,'');
         var payload=nJwt.verify(token, secret,(err,verifiedJwt)=>{
             if(err){
+                usuarios.findOne({
+                    where:{
+                        nickname: req.body.nickname
+                    }
+                })
+                .then(usuario=>{
+                    if(usuario){
+                        db.sequelize.query("UPDATE \"Usuarios\" SET \"nombre_sala_FK\" = \'SalaNull\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+                        db.sequelize.query("UPDATE \"Usuarios\" SET \"estado\" = \'false\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+                    }
+                    else{
+                        res.status(401).send({id: '1', message: "Acceso no autorizado."});
+                    }
+                })
+                .catch(err=>{
+                    res.status(500).send({id: '2', message: "Ocurrió un error al buscar el usuario."});
+                })
+                return res.status(401).send({id: '1', message: "Acceso no autorizado."});
             }else{
                 if(req.body.sala){
                     usuarios.findAll({
@@ -112,6 +131,24 @@ function changeRoom(req,res){
         var token=req.headers.authorization.replace(/['"]+/g,'');
         var payload=nJwt.verify(token, secret,(err,verifiedJwt)=>{
             if(err){
+                usuarios.findOne({
+                    where:{
+                        nickname: req.body.nickname
+                    }
+                })
+                .then(usuario=>{
+                    if(usuario){
+                        db.sequelize.query("UPDATE \"Usuarios\" SET \"nombre_sala_FK\" = \'SalaNull\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+                        db.sequelize.query("UPDATE \"Usuarios\" SET \"estado\" = \'false\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+                    }
+                    else{
+                        res.status(401).send({id: '1', message: "Acceso no autorizado."});
+                    }
+                })
+                .catch(err=>{
+                    res.status(500).send({id: '2', message: "Ocurrió un error al buscar el usuario."});
+                })
+                return res.status(401).send({id: '1', message: "Acceso no autorizado."});
             }else{
                 usuarios.findOne({
                     where:{
@@ -138,31 +175,25 @@ function logout(req,res){
     if(!req.headers.authorization){
         return res.status(403).send({message: "La petición no tiene la cabecera de autenticación."});
     }
-    else{
-        var token=req.headers.authorization.replace(/['"]+/g,'');
-        var payload=nJwt.verify(token, secret,(err,verifiedJwt)=>{
-            if(err){
-            }else{
-                usuarios.findOne({
-                    where:{
-                        nickname: req.body.nickname
-                    }
-                })
-                .then(usuario=>{
-                    if(usuario){
-                        db.sequelize.query("UPDATE \"Usuarios\" SET \"estado\" = \'false\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
-                        db.sequelize.query("UPDATE \"Usuarios\" SET \"nombre_sala_FK\" = \'Sala 1\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
-                        return res.status(200).send({message:'Sesión finalizada.'});
-                    }
-                    return res.status(401).send({id: '1', message: "Acceso no autorizado."});
-                })
-                .catch(err=>{
-                    res.status(500).send({id: '2', message: "Ocurrió un error al buscar el usuario."});
-                })
+    else{  
+        usuarios.findOne({
+            where:{
+                nickname: req.body.nickname
             }
         })
+        .then(usuario=>{
+            if(usuario){
+                db.sequelize.query("UPDATE \"Usuarios\" SET \"estado\" = \'false\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+                db.sequelize.query("UPDATE \"Usuarios\" SET \"nombre_sala_FK\" = \'SalaNull\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+                return res.status(200).send({message:'Sesión finalizada.'});
+            }
+            return res.status(401).send({id: '1', message: "Acceso no autorizado."});
+        })
+        .catch(err=>{
+            res.status(500).send({id: '2', message: "Ocurrió un error al buscar el usuario."});
+            })
+        }
     }
-}
 
 function newToken(req, res){
     if(!req.headers.authorization){
@@ -180,12 +211,16 @@ function newToken(req, res){
                 .then(usuario=>{
                     if(usuario){
                         db.sequelize.query("UPDATE \"Usuarios\" SET \"estado\" = \'false\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+                        db.sequelize.query("UPDATE \"Usuarios\" SET \"nombre_sala_FK\" = \'SalaNull\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
                     }
-                    return res.status(401).send({id: '1', message: "Acceso no autorizado."});
+                    else{
+                        return res.status(401).send({id: '1', message: "Acceso no autorizado."});
+                    }
                 })
                 .catch(err=>{
                     res.status(500).send({id: '2', message: "Ocurrió un error al buscar el usuario."});
                 })
+                return res.status(401).send({id: '1', message: "Acceso no autorizado."});
             }else{
                 var newtoken = jwt.createToken(req.body.nickname, true);
                 usuarioEnvio = {nuevotoken: newtoken, nickname: req.body.nickname, nombre: req.body.nombre}
