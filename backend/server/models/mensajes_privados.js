@@ -10,14 +10,34 @@ module.exports=(sequelize, DataTypes)=>{
         body:{
             type: DataTypes.STRING,
             allowNull: false
+        },
+        emisor:{
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        receptor:{
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        fecha_hora:{
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        id_ConversacionFK:{
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            references: {
+                model: 'Conversaciones',
+                key: 'id_Conversacion'
+            }
         }
     },
     {
         timestamps:false,
         classMethods:{
         associate: function(models) {
-            Mensaje_Privado.hasMany(models.Usuario_MensajeP, {
-                foreignKey: 'idMensaje_FK',
+            Mensaje_Privado.belongsTo(models.Conversacion, {
+                foreignKey: 'id_ConversacionFK',
                 onDelete: 'CASCADE'
             });
         }

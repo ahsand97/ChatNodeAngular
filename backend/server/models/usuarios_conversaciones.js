@@ -1,13 +1,13 @@
 module.exports=(sequelize, DataTypes)=>{
-    const Usuario_MensajeP=sequelize.define('Usuario_MensajeP',{
-        id_Usuario_MensajeP:{
+    const Usuario_Conversacion=sequelize.define('Usuario_Conversacion',{
+        id_Usuario_Conversacion:{
             primaryKey: true,
             type: DataTypes.INTEGER,
             allowNull: false,
             autoIncrement: true,
             unique: true
         },
-        nicknameEmisor_FK:{
+        nicknameUsuario1_FK:{
             type: DataTypes.STRING,
             allowNull: false,
             references: {
@@ -15,7 +15,7 @@ module.exports=(sequelize, DataTypes)=>{
                 key: 'nickname'
             }
         },
-        nicknameReceptor_FK:{
+        nicknameUsuario2_FK:{
             type: DataTypes.STRING,
             allowNull: false,
             references: {
@@ -23,12 +23,12 @@ module.exports=(sequelize, DataTypes)=>{
                 key: 'nickname'
             }
         },
-        idMensaje_FK:{
+        idConversacion_FK:{
             type: DataTypes.STRING,
             allowNull: false,
             references: {
-                model: 'Mensajes_Privados',
-                key: 'id_Message'
+                model: 'Conversaciones',
+                key: 'id_Conversacion'
             }
         }
     },
@@ -36,19 +36,19 @@ module.exports=(sequelize, DataTypes)=>{
         timestamps:false,
         classMethods:{
         associate: function(models) {
-            Usuario_MensajeP.belongsTo(models.Mensaje_Privado, {
-                foreignKey: 'idMensaje_FK',
+            Usuario_Conversacion.belongsTo(models.Conversacion, {
+                foreignKey: 'idConversacion_FK',
                 onDelete: 'CASCADE'
             });
-            Usuario_MensajeP.belongsTo(models.Usuario, {
-                foreignKey: 'nicknameEmisor_FK',
+            Usuario_Conversacion.belongsTo(models.Usuario, {
+                foreignKey: 'nicknameUsuario1_FK',
                 onDelete: 'CASCADE'
             });
-            Usuario_MensajeP.belongsTo(models.Usuario, {
-                foreignKey: 'nicknameReceptor_FK',
+            Usuario_Conversacion.belongsTo(models.Usuario, {
+                foreignKey: 'nicknameUsuario2_FK',
                 onDelete: 'CASCADE'
             });
         }
     }});
-    return Usuario_MensajeP;
+    return Usuario_Conversacion;
 }

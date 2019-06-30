@@ -48,12 +48,12 @@ module.exports=(sequelize, DataTypes)=>{
                 foreignKey: 'nicknameUsuario_FK',
                 onDelete: 'CASCADE'
             });
-            Usuario.hasMany(models.Usuario_MensajeP, {
-                foreignKey: 'nicknameEmisor_FK',
+            Usuario.hasMany(models.Usuario_Conversacion, {
+                foreignKey: 'nicknameUsuario1_FK',
                 onDelete: 'CASCADE'
             });
-            Usuario.hasMany(models.Usuario_MensajeP, {
-                foreignKey: 'nicknameReceptor_FK',
+            Usuario.hasMany(models.Usuario_Conversacion, {
+                foreignKey: 'nicknameUsuario2_FK',
                 onDelete: 'CASCADE'
             });
         }

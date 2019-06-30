@@ -21,9 +21,6 @@ class Usuarios(BaseCliente):
     eventos = relationship("Eventos", back_populates="usuario")
     notificaciones_usuarios = relationship("Notificaciones_Usuarios", back_populates="usuario")
     comunidades_usuarios = relationship("Comunidades_Usuarios", back_populates="usuario")
-    '''
-    usuarios_mensajesp_emisor = relationship("Usuarios_MensajesP", back_populates="emisor")
-    usuarios_mensajesp_receptor = relationship("Usuarios_MensajesP", back_populates="receptor")'''
 
     def __repr__(self):
         return '<Usuario {}>'.format(self.nickname)
@@ -112,27 +109,43 @@ class Comunidades_Usuarios(BaseCliente):
 class Mensajes_Privados(BaseCliente):
     __tablename__ = 'Mensajes_Privados'
     id_Message = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    Body = Column(Text, nullable=False)
+    body = Column(Text, nullable=False)
+    emisor = Column(Text, nullable=False)
+    receptor = Column(Text, nullable=False)
+    fecha_hora = Column(Text, nullable=False)
+    id_ConversacionFK = Column(Integer, ForeignKey('Conversaciones.id_Conversacion'), nullable=False)
 
-    usuarios_mensajesp = relationship("Usuarios_MensajesP", back_populates="mensaje")
+
+    conversacion = relationship("Conversaciones", back_populates="mensajes")
 
     def __repr__(self):
         return '<Mensaje Privado {}>'.format(self.id_Message)
 
-class Usuarios_MensajesP(BaseCliente):
-    __tablename__ = 'Usuarios_MensajesPrivados'
-    id_Usuario_MensajeP = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+class Conversaciones(BaseCliente):
+    __tablename__ = 'Conversaciones'
+    id_Conversacion = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
 
-    nicknameEmisor_FK = Column(Text, ForeignKey('Usuarios.nickname'), nullable=False)
-    nicknameReceptor_FK = Column(Text, ForeignKey('Usuarios.nickname'), nullable=False)
-    idMensaje_FK = Column(Integer, ForeignKey('Mensajes_Privados.id_Message'), nullable=False)
-
-    mensaje  = relationship("Mensajes_Privados", back_populates="usuarios_mensajesp")
-    emisor = relationship("Usuarios", foreign_keys=[nicknameEmisor_FK])
-    receptor = relationship("Usuarios", foreign_keys=[nicknameReceptor_FK])
+    mensajes = relationship("Mensajes_Privados", back_populates="conversacion")
+    usuarios_conversaciones = relationship("Usuarios_Conversaciones", back_populates="conversacion")
 
     def __repr__(self):
-        return '<Usuario_MensajeP {}>'.format(self.id_Usuario_MensajeP)
+        return '<Conversacion {}>'.format(self.id_Conversacion)
+
+
+class Usuarios_Conversaciones(BaseCliente):
+    __tablename__ = 'Usuarios_Conversaciones'
+    id_Usuario_Conversacion = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+
+    nicknameUsuario1_FK = Column(Text, ForeignKey('Usuarios.nickname'), nullable=False)
+    nicknameUsuario2_FK = Column(Text, ForeignKey('Usuarios.nickname'), nullable=False)
+    idConversacion_FK = Column(Integer, ForeignKey('Conversaciones.id_Conversacion'), nullable=False)
+
+    conversacion  = relationship("Conversaciones", back_populates="usuarios_conversaciones")
+    usuario1 = relationship("Usuarios", foreign_keys=[nicknameUsuario1_FK])
+    usuario2 = relationship("Usuarios", foreign_keys=[nicknameUsuario2_FK])
+
+    def __repr__(self):
+        return '<Usuarios_Conversaciones {}>'.format(self.id_Usuario_Conversacion)
 
 
 
@@ -147,6 +160,15 @@ sala2=Salas(nombre="Sala 2", descripcion="Sala 2 por defecto.")
 sala3=Salas(nombre="Sala 3", descripcion="Sala 3 por defecto.")
 sala4=Salas(nombre="Sala 4", descripcion="Sala 4 por defecto.")
 sala5=Salas(nombre="Sala 5", descripcion="Sala 5 por defecto.")
+
+usuario1=Usuarios(nickname="reydali", nombre="Luis David", password="reydali")
+usuario2=Usuarios(nickname="sara", nombre="SaraJn", password="sara")
+usuario3=Usuarios(nickname="nectar", nombre="Francisca Thompson", password="nectar")
+
+session1.add(usuario1)
+session1.add(usuario2)
+session1.add(usuario3)
+
 session1.add(salaNull)
 session1.add(sala1)
 session1.add(sala2)
