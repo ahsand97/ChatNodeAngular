@@ -23,15 +23,12 @@ export class GuardService implements CanActivate{
         })
         .catch(error=>{
           console.log(error);
-          let errorhandler = error.json();
-          if(errorhandler['id'] == '1'){
             this._auth.logoutToDB();
             this._auth.logOut();
             this._router.navigate(['/login']);
-          }
-        });
+        })
       }
-      else if(destino[0] == 'principal' || destino[0] == 'main'){
+      else if(destino[0] == 'main'){
         this._refresh.refresh(identidad)
         .then(respuesta=>{
           console.log(respuesta);
@@ -39,16 +36,15 @@ export class GuardService implements CanActivate{
         })
         .catch(error=>{
           console.log(error);
-          let errorhandler = error.json();
-          if(errorhandler['id'] == '1'){
-            this._auth.logoutToDB();
-            this._router.navigate(['/login']);
+          this._auth.logoutToDB();
+          this._auth.logOut();
+          this._router.navigate(['/login']);
           }
-        })
+        )
         return true;
       }
       else{
-        return true;
+        return false;
       }
     }
     else{

@@ -1,5 +1,8 @@
-const comunidades = require("../models").Comunidad;
-const eventos = require("../models").Evento;
+const usuarios = require("../models").Usuario;
+const conversaciones = require("../models").Conversacion;
+const usuarios_conversaciones=  require("../models").Usuario_Conversacion;
+const Op = require('Sequelize').Op;
+
 const jwt = require('../services/jwt');
 const db = require('../models/index');
 
@@ -32,17 +35,25 @@ function getAll(req,res){
                 })
                 return res.status(401).send({id: '1', message: "Acceso no autorizado."});
             }else{
-                comunidades.findAll()
-                .then(comunidades=>{
-                    let comunidadesEnvio=[];
-                    for (let comunidad of comunidades){
-                        comunidadCiclo={nickname:comunidad.nickname, nombre:comunidad.nombre};
-                        comunidadesEnvio.push(comunidadCiclo);
+                usuarios_conversaciones.findAll({
+                    where:{
+                        [Op.or]:[
+                            {nicknameUsuario1_FK: req.body.nickname},
+                            {nicknameUsuario2_FK: req.body.nickname}
+                        ]
+                        
                     }
-                    res.status(200).send({comunidadesEnvio});
+                })
+                .then(respuesta=>{
+                    let usuariosConversacionesEnvio=[];
+                    for (let usuarioConversacion of respuesta){
+                        usuarioConversacionCiclo={nicknameUsuario1_FK:usuarioConversacion.nicknameUsuario1_FK, nicknameUsuario2_FK:usuarioConversacion.nicknameUsuario2_FK, idConversacion_FK: usuarioConversacion.idConversacion_FK};
+                        usuariosConversacionesEnvio.push(usuarioConversacionCiclo);
+                    }
+                    res.status(200).send({usuariosConversacionesEnvio});
                 })
                 .catch(err=>{
-                    res.status(500).send({message: "Ocurrió un error al buscar las comunidades."});
+                    res.status(500).send({message: "Ocurrió un error al buscar las conversaciones."});
                 })
             }
         })

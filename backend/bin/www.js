@@ -27,25 +27,43 @@ socketio.on('connection', function(socket){
         console.log('desconectado', cuerpa);
     });
 
+    socket.on('nuevo-usuario-sistema', function(cuerpa){
+        socketio.emit('nuevo-usuario-sistema', cuerpa);
+        console.log('nuevo-usuario-sistema', cuerpa);
+    });
+
+    socket.on('elimino-usuario-sistema', function(cuerpa){
+        socketio.emit('elimino-usuario-sistema', cuerpa);
+        console.log('nuevo-usuario-sistema', cuerpa);
+    });
+
+    socket.on('nueva-conversacion', function(cuerpa){
+        socketio.emit('nueva-conversacion', cuerpa);
+        console.log('nueva-conversacion', cuerpa);
+    });
+
     socket.on('nuevo-mensaje', function(cuerpo){
-        console.log(cuerpo);
-        //socketio.to(cuerpo.sala).emit('nuevo-mensaje', cuerpo);
-        //console.log("envie",cuerpo);
+        let today = new Date();
+        let time = (today.getHours()<10?'0':'') + today.getHours() + ":" + (today.getMinutes()<10?'0':'') + today.getMinutes() + ":" + (today.getSeconds()<10?'0':'') + today.getSeconds();
+        cuerpo['time']=time
         socketio.emit('nuevo-mensaje', cuerpo);
     });
 
     socket.on('nuevo-evento', function(cuerpo){
         console.log(cuerpo);
-        //socketio.to(cuerpo.sala).emit('nuevo-mensaje', cuerpo);
-        //console.log("envie",cuerpo);
         socket.broadcast.emit('nuevo-evento', cuerpo);
     });
 
-    socket.on('nuevo-mensaje-privade', function(cuerpo){
-        console.log(cuerpo);
-        //socketio.to(cuerpo.sala).emit('nuevo-mensaje', cuerpo);
-        //console.log("envie",cuerpo);
-        socketio.emit('nuevo-mensaje-privade', cuerpo);
+    socket.on('nuevo-mensaje-privado', function(cuerpo){
+        console.log('nuevo-mensaje-privado',cuerpo);
+        socketio.in(cuerpo.emisor+cuerpo.receptor).emit('nuevo-mensaje-privado', cuerpo);
+        socketio.in(cuerpo.emisor+cuerpo.receptor).clients((error, clients) => {
+            if (error) throw error;
+            if (clients.length == 1){
+                console.log("notificar al otro");
+            } // => [PZDoMHjiu8PYfRiKAAAF, Anw2LatarvGVVXEIAAAD]
+          });
+        //socketio.emit('nuevo-mensaje-privado', cuerpo);
     });
 
 

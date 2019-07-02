@@ -9,7 +9,7 @@ module.exports=(sequelize, DataTypes)=>{
         },
         nicknameUsuario1_FK:{
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: 'Usuarios',
                 key: 'nickname'
@@ -17,7 +17,7 @@ module.exports=(sequelize, DataTypes)=>{
         },
         nicknameUsuario2_FK:{
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: 'Usuarios',
                 key: 'nickname'
@@ -25,7 +25,7 @@ module.exports=(sequelize, DataTypes)=>{
         },
         idConversacion_FK:{
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: 'Conversaciones',
                 key: 'id_Conversacion'
@@ -33,20 +33,22 @@ module.exports=(sequelize, DataTypes)=>{
         }
     },
     {
+        freezeTableName: true,
+        tableName: 'Usuarios_Conversaciones',
         timestamps:false,
         classMethods:{
         associate: function(models) {
             Usuario_Conversacion.belongsTo(models.Conversacion, {
                 foreignKey: 'idConversacion_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
             Usuario_Conversacion.belongsTo(models.Usuario, {
                 foreignKey: 'nicknameUsuario1_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
             Usuario_Conversacion.belongsTo(models.Usuario, {
                 foreignKey: 'nicknameUsuario2_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
         }
     }});

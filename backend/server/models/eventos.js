@@ -29,7 +29,7 @@ module.exports=(sequelize, DataTypes)=>{
         },
         nicknameCreador_FK:{
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: 'Usuarios',
                 key: 'nickname'
@@ -37,7 +37,7 @@ module.exports=(sequelize, DataTypes)=>{
         },
         nombreComunidad_FK:{
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: 'Comunidades',
                 key: 'nombre'
@@ -50,15 +50,15 @@ module.exports=(sequelize, DataTypes)=>{
         associate: function(models) {
             Evento.belongsTo(models.Usuario, {
                 foreignKey: 'nicknameCreador_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
             Evento.belongsTo(models.Comunidad, {
                 foreignKey: 'nombreComunidad_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
             Evento.hasMany(models.Notificacion, {
                 foreignKey: 'idEvento_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
         }
     }});

@@ -1,5 +1,6 @@
-const comunidades = require("../models").Comunidad;
-const eventos = require("../models").Evento;
+const mensajes_privados = require("../models").Mensaje_Privado;
+const usuarios = require("../models").Usuario;
+
 const jwt = require('../services/jwt');
 const db = require('../models/index');
 
@@ -17,7 +18,7 @@ function getAll(req,res){
             if(err){
                 usuarios.findOne({
                     where:{
-                        nickname: req.body.nickname
+                        nickname: req.body.origen
                     }
                 })
                 .then(usuario=>{
@@ -32,17 +33,21 @@ function getAll(req,res){
                 })
                 return res.status(401).send({id: '1', message: "Acceso no autorizado."});
             }else{
-                comunidades.findAll()
-                .then(comunidades=>{
-                    let comunidadesEnvio=[];
-                    for (let comunidad of comunidades){
-                        comunidadCiclo={nickname:comunidad.nickname, nombre:comunidad.nombre};
-                        comunidadesEnvio.push(comunidadCiclo);
+                mensajes_privados.findAll({
+                    where:{
+                        id_ConversacionFK: req.body.conversacion.idConversacion_FK
                     }
-                    res.status(200).send({comunidadesEnvio});
                 })
-                .catch(err=>{
-                    res.status(500).send({message: "Ocurrió un error al buscar las comunidades."});
+                .then(mensajes=>{
+                    let mensajesEnvio=[];
+                    for (let mensaje of mensajes){
+                        mensajeciclo={emisor:mensaje.emisor, receptor:mensaje.receptor, body: mensaje.body, fecha_hora: mensaje.fecha_hora, id_ConversacionFK: mensaje.id_ConversacionFK};
+                        mensajesEnvio.push(mensajeciclo);
+                    }
+                    res.status(200).send({mensajesEnvio});
+                })
+                .catch(error=>{
+                    res.status(500).send({message: "Ocurrió un error al buscar los mensajes privados."});
                 })
             }
         })

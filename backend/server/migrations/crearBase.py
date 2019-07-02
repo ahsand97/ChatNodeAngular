@@ -15,12 +15,12 @@ class Usuarios(BaseCliente):
     password = Column(Text, nullable=False)
     estado = Column(Boolean, nullable=False, default=False)
 
-    nombre_sala_FK = Column(Text, ForeignKey('Salas.nombre'), nullable=False, default="SalaNull")
+    nombre_sala_FK = Column(Text, ForeignKey('Salas.nombre', ondelete='SET NULL'), nullable=True, default="SalaNull")
 
     sala = relationship("Salas", back_populates="usuarios")
-    eventos = relationship("Eventos", back_populates="usuario")
-    notificaciones_usuarios = relationship("Notificaciones_Usuarios", back_populates="usuario")
-    comunidades_usuarios = relationship("Comunidades_Usuarios", back_populates="usuario")
+    eventos = relationship("Eventos", back_populates="usuario", passive_deletes=True)
+    notificaciones_usuarios = relationship("Notificaciones_Usuarios", back_populates="usuario", passive_deletes=True)
+    comunidades_usuarios = relationship("Comunidades_Usuarios", back_populates="usuario", passive_deletes=True)
 
     def __repr__(self):
         return '<Usuario {}>'.format(self.nickname)
@@ -30,7 +30,7 @@ class Salas(BaseCliente):
     nombre = Column(Text, primary_key=True, nullable=False)
     descripcion = Column(Text, nullable=True)
 
-    usuarios = relationship("Usuarios", back_populates="sala")
+    usuarios = relationship("Usuarios", back_populates="sala", passive_deletes=True)
 
     def __repr__(self):
         return '<Sala {}>'.format(self.nombre)
@@ -44,12 +44,12 @@ class Eventos(BaseCliente):
     hora = Column(Text, nullable=False)
     lugar = Column(Text, nullable=False)
 
-    nicknameCreador_FK = Column(Text, ForeignKey('Usuarios.nickname'), nullable=False)
-    nombreComunidad_FK = Column(Text, ForeignKey('Comunidades.nombre'), nullable=False)
+    nicknameCreador_FK = Column(Text, ForeignKey('Usuarios.nickname', ondelete='SET NULL'), nullable=True)
+    nombreComunidad_FK = Column(Text, ForeignKey('Comunidades.nombre', ondelete='SET NULL'), nullable=True)
 
     usuario = relationship("Usuarios", back_populates="eventos")
     comunidad = relationship("Comunidades", back_populates="eventos")
-    notificaciones = relationship("Notificaciones", back_populates="evento")
+    notificaciones = relationship("Notificaciones", back_populates="evento", passive_deletes=True)
 
     def __repr__(self):
         return '<Evento {}>'.format(self.id_Evento)
@@ -59,8 +59,8 @@ class Comunidades(BaseCliente):
     nombre = Column(Text, primary_key=True, nullable=False)
     descripcion = Column(Text, nullable=True)
 
-    eventos = relationship("Eventos", back_populates="comunidad")
-    comunidades_usuarios = relationship("Comunidades_Usuarios", back_populates="comunidad")
+    eventos = relationship("Eventos", back_populates="comunidad", passive_deletes=True)
+    comunidades_usuarios = relationship("Comunidades_Usuarios", back_populates="comunidad", passive_deletes=True)
 
     def __repr__(self):
         return '<Comunidad {}>'.format(self.nombre)
@@ -71,10 +71,10 @@ class Notificaciones(BaseCliente):
     nombre = Column(Text, nullable=False)
     descripcion = Column(Text, nullable=True)
 
-    idEvento_FK = Column(Integer, ForeignKey('Eventos.id_Evento'), nullable=False)
+    idEvento_FK = Column(Integer, ForeignKey('Eventos.id_Evento', ondelete='SET NULL'), nullable=True)
 
     evento = relationship("Eventos", back_populates="notificaciones")
-    notificaciones_usuarios = relationship("Notificaciones_Usuarios", back_populates="notificacion")
+    notificaciones_usuarios = relationship("Notificaciones_Usuarios", back_populates="notificacion", passive_deletes=True)
 
     def __repr__(self):
         return '<Notificacion {}>'.format(self.id_Notificacion)
@@ -84,8 +84,8 @@ class Notificaciones_Usuarios(BaseCliente):
     id_Notificacion_Usuario = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     leida = Column(Boolean, nullable=False)
 
-    idNotificacion_FK = Column(Integer, ForeignKey('Notificaciones.id_Notificacion'), nullable=False)
-    nicknameUsuario_FK = Column(Text, ForeignKey('Usuarios.nickname'), nullable=False)
+    idNotificacion_FK = Column(Integer, ForeignKey('Notificaciones.id_Notificacion', ondelete='SET NULL'), nullable=True)
+    nicknameUsuario_FK = Column(Text, ForeignKey('Usuarios.nickname', ondelete='SET NULL'), nullable=True)
 
     usuario = relationship("Usuarios", back_populates="notificaciones_usuarios")
     notificacion = relationship("Notificaciones", back_populates="notificaciones_usuarios")
@@ -97,8 +97,8 @@ class Comunidades_Usuarios(BaseCliente):
     __tablename__ = 'Comunidades_Usuarios'
     id_Comunidad_Usuario = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
 
-    nicknameUsuario_FK = Column(Text, ForeignKey('Usuarios.nickname'), nullable=False)
-    nombreComunidad_FK = Column(Text, ForeignKey('Comunidades.nombre'), nullable=False)
+    nicknameUsuario_FK = Column(Text, ForeignKey('Usuarios.nickname', ondelete='SET NULL'), nullable=True)
+    nombreComunidad_FK = Column(Text, ForeignKey('Comunidades.nombre', ondelete='SET NULL'), nullable=True)
 
     comunidad = relationship("Comunidades", back_populates="comunidades_usuarios")
     usuario = relationship("Usuarios", back_populates="comunidades_usuarios")
@@ -113,7 +113,8 @@ class Mensajes_Privados(BaseCliente):
     emisor = Column(Text, nullable=False)
     receptor = Column(Text, nullable=False)
     fecha_hora = Column(Text, nullable=False)
-    id_ConversacionFK = Column(Integer, ForeignKey('Conversaciones.id_Conversacion'), nullable=False)
+
+    id_ConversacionFK = Column(Integer, ForeignKey('Conversaciones.id_Conversacion', ondelete='SET NULL'), nullable=True)
 
 
     conversacion = relationship("Conversaciones", back_populates="mensajes")
@@ -124,8 +125,10 @@ class Mensajes_Privados(BaseCliente):
 class Conversaciones(BaseCliente):
     __tablename__ = 'Conversaciones'
     id_Conversacion = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    usuario_1 = Column(Text, nullable=True)
+    usuario_2 = Column(Text, nullable=True)
 
-    mensajes = relationship("Mensajes_Privados", back_populates="conversacion")
+    mensajes = relationship("Mensajes_Privados", back_populates="conversacion", passive_deletes=True)
     usuarios_conversaciones = relationship("Usuarios_Conversaciones", back_populates="conversacion")
 
     def __repr__(self):
@@ -136,13 +139,13 @@ class Usuarios_Conversaciones(BaseCliente):
     __tablename__ = 'Usuarios_Conversaciones'
     id_Usuario_Conversacion = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
 
-    nicknameUsuario1_FK = Column(Text, ForeignKey('Usuarios.nickname'), nullable=False)
-    nicknameUsuario2_FK = Column(Text, ForeignKey('Usuarios.nickname'), nullable=False)
-    idConversacion_FK = Column(Integer, ForeignKey('Conversaciones.id_Conversacion'), nullable=False)
+    nicknameUsuario1_FK = Column(Text, ForeignKey('Usuarios.nickname', ondelete='SET NULL'), nullable=True)
+    nicknameUsuario2_FK = Column(Text, ForeignKey('Usuarios.nickname', ondelete='SET NULL'), nullable=True)
+    idConversacion_FK = Column(Integer, ForeignKey('Conversaciones.id_Conversacion', ondelete='SET NULL'), nullable=True)
 
     conversacion  = relationship("Conversaciones", back_populates="usuarios_conversaciones")
-    usuario1 = relationship("Usuarios", foreign_keys=[nicknameUsuario1_FK])
-    usuario2 = relationship("Usuarios", foreign_keys=[nicknameUsuario2_FK])
+    usuario1 = relationship("Usuarios", foreign_keys=[nicknameUsuario1_FK], backref=backref('usuario1_conversacion', passive_deletes=True))
+    usuario2 = relationship("Usuarios", foreign_keys=[nicknameUsuario2_FK], backref=backref('usuario2_conversacion', passive_deletes=True))
 
     def __repr__(self):
         return '<Usuarios_Conversaciones {}>'.format(self.id_Usuario_Conversacion)
@@ -161,14 +164,6 @@ sala3=Salas(nombre="Sala 3", descripcion="Sala 3 por defecto.")
 sala4=Salas(nombre="Sala 4", descripcion="Sala 4 por defecto.")
 sala5=Salas(nombre="Sala 5", descripcion="Sala 5 por defecto.")
 
-usuario1=Usuarios(nickname="reydali", nombre="Luis David", password="reydali")
-usuario2=Usuarios(nickname="sara", nombre="SaraJn", password="sara")
-usuario3=Usuarios(nickname="nectar", nombre="Francisca Thompson", password="nectar")
-
-session1.add(usuario1)
-session1.add(usuario2)
-session1.add(usuario3)
-
 session1.add(salaNull)
 session1.add(sala1)
 session1.add(sala2)
@@ -176,4 +171,43 @@ session1.add(sala3)
 session1.add(sala4)
 session1.add(sala5)
 session1.commit()
+
+usuario1=Usuarios(nickname="reydali", nombre="Luis David", password="reydali")
+usuario2=Usuarios(nickname="sara", nombre="SaraJn", password="sara")
+usuario3=Usuarios(nickname="nectar", nombre="Francisca Thompson", password="nectar")
+usuario4=Usuarios(nickname="burra", nombre="Laburra", password="burra")
+
+session1.add(usuario1)
+session1.add(usuario2)
+session1.add(usuario3)
+session1.add(usuario4)
+session1.commit()
+
+conversaion1=Conversaciones(usuario_1="reydali", usuario_2="sara")
+conversaion2=Conversaciones(usuario_1="nectar", usuario_2="reydali")
+conversaion3=Conversaciones(usuario_1="reydali", usuario_2="burra")
+
+session1.add(conversaion1)
+session1.add(conversaion2)
+session1.add(conversaion3)
+session1.commit()
+
+usuario_conversacion1=Usuarios_Conversaciones(nicknameUsuario1_FK="reydali", nicknameUsuario2_FK="sara", idConversacion_FK=1)
+usuario_conversacion2=Usuarios_Conversaciones(nicknameUsuario1_FK="nectar", nicknameUsuario2_FK="reydali", idConversacion_FK=2)
+usuario_conversacion3=Usuarios_Conversaciones(nicknameUsuario1_FK="reydali", nicknameUsuario2_FK="burra", idConversacion_FK=3)
+
+session1.add(usuario_conversacion1)
+session1.add(usuario_conversacion2)
+session1.add(usuario_conversacion3)
+session1.commit()
+
+mensaje1=Mensajes_Privados(body="Hola como vas", emisor="reydali", receptor="sara", fecha_hora='01/07/2019 23:39:00', id_ConversacionFK=1)
+mensaje2=Mensajes_Privados(body="bien y tu?", emisor="sara", receptor="reydali", fecha_hora='01/07/2019 23:39:20', id_ConversacionFK=1)
+mensaje3=Mensajes_Privados(body="bien gracias", emisor="reydali", receptor="sara", fecha_hora='01/07/2019 23:39:30', id_ConversacionFK=1)
+
+session1.add(mensaje1)
+session1.add(mensaje2)
+session1.add(mensaje3)
+session1.commit()
+
 session1.close()

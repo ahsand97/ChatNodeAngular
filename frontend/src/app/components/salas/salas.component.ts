@@ -4,7 +4,7 @@ import { ChatService } from 'src/app/services/chat.service';
 import { Router } from '@angular/router';
 import { RefreshService } from 'src/app/services/refresh.service';
 import { GetUsersService } from 'src/app/services/get-users.service';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-salas',
@@ -86,7 +86,9 @@ export class SalasComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this._chatService.enviarIdentidadalDesconectar(this.roomSelcted.name ,{nickname: this.identidad['nickname'], nombre: this.identidad['nombre']});
-    this._GetUsersService.changeRoomUser(this.identidad, 'SalaNull');
+    if (this._Auth.getIdentity()){
+      this._GetUsersService.changeRoomUser(this.identidad, 'SalaNull');
+    }  
   }
 
   refresh(){

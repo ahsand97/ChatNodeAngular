@@ -9,9 +9,12 @@
   <div style="width:100%; text-align: center; padding:0;">
       <button *ngFor="let link of links" class="btn btn-primary" [routerLink]="link.path" routerLinkActive="active">{{link.label}}</button>
   </div>
-  <h4 style="padding-right: 20px;" id="nickname">Tu: {{identidad.nickname}}</h4>
+  <div style="display: inline-block; padding-right: 20px;">
+  <button mat-stroked-button color="warn" (click)="alertaEliminar()">Eliminar Cuenta</button>
+  </div>
+  <h4 style="padding-right: 20px; display: inline-block;" id="nickname">Tu: {{identidad.nickname}}</h4>
   <div style="text-align:right; padding-right: 2%">
-      <button class="btn btn-danger" (click)="logOut()">Salir</button>
+    <button class="btn btn-danger" (click)="logOut()">Salir</button>
   </div>
 </nav>
 

@@ -25,7 +25,7 @@ module.exports=(sequelize, DataTypes)=>{
         },
         id_ConversacionFK:{
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: 'Conversaciones',
                 key: 'id_Conversacion'
@@ -33,12 +33,14 @@ module.exports=(sequelize, DataTypes)=>{
         }
     },
     {
+        freezeTableName: true,
+        tableName: 'Mensajes_Privados',
         timestamps:false,
         classMethods:{
         associate: function(models) {
             Mensaje_Privado.belongsTo(models.Conversacion, {
                 foreignKey: 'id_ConversacionFK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
         }
     }});

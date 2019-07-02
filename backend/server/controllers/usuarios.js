@@ -1,4 +1,5 @@
 const usuarios = require("../models").Usuario;
+
 const jwt = require('../services/jwt');
 const db = require('../models/index');
 
@@ -92,7 +93,7 @@ function getAll(req,res){
                     .then(usuarios=>{
                         let usuariosEnvio=[];
                         for (let usuario of usuarios){
-                            usuarioCiclo={nickname:usuario.nickname, nombre:usuario.nombre};
+                            usuarioCiclo={nickname:usuario.nickname, nombre:usuario.nombre, estado:usuario.estado};
                             usuariosEnvio.push(usuarioCiclo);
                         }
                         res.status(200).send({usuariosEnvio});
@@ -106,7 +107,7 @@ function getAll(req,res){
                     .then(usuarios=>{
                         let usuariosEnvio=[];
                         for (let usuario of usuarios){
-                            usuarioCiclo={nickname:usuario.nickname, nombre:usuario.nombre};
+                            usuarioCiclo={nickname:usuario.nickname, nombre:usuario.nombre, estado:usuario.estado};
                             usuariosEnvio.push(usuarioCiclo);
                         }
 
@@ -187,7 +188,6 @@ function logout(req,res){
                 db.sequelize.query("UPDATE \"Usuarios\" SET \"nombre_sala_FK\" = \'SalaNull\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
                 return res.status(200).send({message:'Sesión finalizada.'});
             }
-            return res.status(401).send({id: '1', message: "Acceso no autorizado."});
         })
         .catch(err=>{
             res.status(500).send({id: '2', message: "Ocurrió un error al buscar el usuario."});
@@ -230,11 +230,73 @@ function newToken(req, res){
     }
 }
 
+function deleteAccount(req, res){
+    if(!req.headers.authorization){
+        return res.status(403).send({message: "La petición no tiene la cabecera de autenticación."});
+    }
+    else{
+        var token=req.headers.authorization.replace(/['"]+/g,'');
+        var payload=nJwt.verify(token, secret,(err,verifiedJwt)=>{
+            if(err){
+                usuarios.findOne({
+                    where:{
+                        nickname: req.body.nickname
+                    }
+                })
+                .then(usuario=>{
+                    if(usuario){
+                        db.sequelize.query("UPDATE \"Usuarios\" SET \"estado\" = \'false\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+                        db.sequelize.query("UPDATE \"Usuarios\" SET \"nombre_sala_FK\" = \'SalaNull\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+                    }
+                    else{
+                        return res.status(401).send({id: '1', message: "Acceso no autorizado."});
+                    }
+                })
+                .catch(err=>{
+                    res.status(500).send({id: '2', message: "Ocurrió un error al buscar el usuario."});
+                })
+                return res.status(401).send({id: '1', message: "Acceso no autorizado."});
+            }else{
+                usuarios.findOne({
+                    where:{
+                        nickname: req.body.nickname
+                    }
+                })
+                .then(usuario=>{
+                    if(usuario){
+                        usuarios.destroy({
+                            where:{
+                                nickname:usuario.nickname
+                            }
+                        })
+                        .then(function(){
+                            res.status(200).send({mensaje: 'Cuenta eliminada.'});
+                        })
+                        .catch(function(error){
+                            console.log(error)
+                            res.status(500).send({mensaje: 'Error al eliminar la cuenta.'})
+                        })
+                    }
+                    else{
+                        return res.status(401).send({id: '1', message: "Acceso no autorizado."});
+                    }
+                })
+                .catch(err=>{
+                    res.status(500).send({id: '2', message: "Ocurrió un error al buscar el usuario."});
+                })
+            }
+        })
+    }
+}
+
+
+
 module.exports={
     crear_usuario,
     login,
     getAll,
     logout,
     newToken,
-    changeRoom
+    changeRoom,
+    deleteAccount
 }

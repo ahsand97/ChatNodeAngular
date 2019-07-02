@@ -4,7 +4,8 @@ import { Router } from '@angular/router';
 import { MustMatch } from './validadorClaves';
 import { RegistroService } from 'src/app/services/registro.service';
 
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material';
+import { ChatService } from 'src/app/services/chat.service';
 
 @Component({
   selector: 'app-registro',
@@ -14,7 +15,7 @@ import {MatSnackBar} from '@angular/material';
 export class RegistroComponent implements OnInit {
   registroForm: FormGroup;
 
-  constructor(private _SnackBar:MatSnackBar ,private _ServicioRegistro:RegistroService, private _Router:Router, private _formBuilder:FormBuilder) { }
+  constructor(private _SnackBar:MatSnackBar ,private _ServicioRegistro:RegistroService, private _Router:Router, private _formBuilder:FormBuilder, private _chatServie:ChatService) { }
 
   ngOnInit() {
     this.registroForm = this._formBuilder.group({
@@ -43,17 +44,18 @@ export class RegistroComponent implements OnInit {
     let nuevoUsuario = {'nickname': this.nickname.value, 'nombre': this.nombre.value, 'password': this.password.value};
     this._ServicioRegistro.registrar(nuevoUsuario)
     .then(respuesta=>{
+      this._chatServie.sendNuevoUsuarioSistema({nickname:nuevoUsuario.nickname, nombre:nuevoUsuario.nombre, estado:'false'});
       this.notificar();
       this._Router.navigate(['/login']);
     })
     .catch(error=>{
       let errorhandler = error.json();
       if(errorhandler['id'] == '1'){
-        var errorServer2 = document.getElementById('error-servidor2');
+        let errorServer2 = document.getElementById('error-servidor2');
         errorServer2.style.display = 'block';
       }
       else{
-        var errorServer = document.getElementById('error-servidor');
+        let errorServer = document.getElementById('error-servidor');
         errorServer.style.display = 'block';
       }
     });

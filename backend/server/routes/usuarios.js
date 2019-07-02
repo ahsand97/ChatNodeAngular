@@ -8,4 +8,5 @@ module.exports=(app)=>{
     app.post('/api/refresh', usuariosController.newToken);
     app.post('/api/usuarios', usuariosController.getAll);
     app.post('/api/changeroom', usuariosController.changeRoom);
+    app.post('/api/deleteAccount', usuariosController.deleteAccount);
 }

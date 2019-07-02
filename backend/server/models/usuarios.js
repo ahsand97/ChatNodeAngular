@@ -20,7 +20,7 @@ module.exports=(sequelize, DataTypes)=>{
         },
         nombre_sala_FK:{
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             defaultValue: 'SalaNull',
             references: {
                 model: 'Salas',
@@ -34,27 +34,27 @@ module.exports=(sequelize, DataTypes)=>{
         associate: function(models) {
             Usuario.hasMany(models.Evento, {
                 foreignKey: 'nicknameCreador_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
             Usuario.belongsTo(models.Sala, {
                 foreignKey: 'nombre_sala_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
             Usuario.hasMany(models.Notificacion_Usuario, {
                 foreignKey: 'nicknameUsuario_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
             Usuario.hasMany(models.Comunidad_Usuario, {
                 foreignKey: 'nicknameUsuario_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
             Usuario.hasMany(models.Usuario_Conversacion, {
                 foreignKey: 'nicknameUsuario1_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
             Usuario.hasMany(models.Usuario_Conversacion, {
                 foreignKey: 'nicknameUsuario2_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
         }
     }});

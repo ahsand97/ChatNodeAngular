@@ -37,9 +37,9 @@ export class ComunidadesComponent implements OnInit {
     })
     .catch(error=>{
       console.log('errorServer', error);
-      this._Auth.logoutToDB();
+      /*this._Auth.logoutToDB();
       this._Auth.logOut();
-      this._Router.navigate(['/login']);
+      this._Router.navigate(['/login']);*/
     })
 
     this.identidad = this._Auth.getIdentity();

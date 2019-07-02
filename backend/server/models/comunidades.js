@@ -12,16 +12,18 @@ module.exports=(sequelize, DataTypes)=>{
         }
     },
     {
+        freezeTableName: true,
+        tableName: 'Comunidades',
         timestamps:false,
         classMethods:{
         associate: function(models) {
             Comunidad.hasMany(models.Evento, {
                 foreignKey: 'nombreComunidad_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
             Comunidad.hasMany(models.Comunidad_Usuario, {
                 foreignKey: 'nombreComunidad_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
         }
     }});

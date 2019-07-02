@@ -1,3 +1,4 @@
+<router-outlet></router-outlet>
 <body>
     <div class="d-flex" id="wrapper">
       <div class="bg-light border-right" id="sidebar-wrapper">
@@ -18,7 +19,8 @@
               <br>
               <ng-container *ngFor="let message of roomSelcted.messages">
                 <ng-container *ngIf="message.nickname === identidad.nickname; else condicionFalsa">
-                  <h4 style="text-align: right; padding-right: 20px;">->{{message.nickname}}:<h6 style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color:brown; margin-left: 28px;">{{message.cuerpo}}</h6></h4>
+                  <h4 style="text-align: right; padding-right: 20px;">->{{message.nickname}}:<h6 style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color:brown; margin-left: 28px; margin-bottom: -5px;">{{message.cuerpo}}</h6></h4>
+                  <h5 style="text-align: right; padding-right: 20px; font-size: 12px;">{{message.time}}</h5>
                 </ng-container>
                 <ng-template #condicionFalsa>
                   <h4 style="padding-left: 20px;">->{{message.nickname}}:<h6 style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color:brown; margin-left: 28px;">{{message.cuerpo}}</h6></h4>
@@ -40,24 +42,4 @@
   
 </body>
 
-
-<!--<mat-sidenav-container class="sidenav-container">
-    <mat-sidenav mode="side" opened class="sidenav">
-      <h3>Salas</h3>
-      <button mat-button *ngFor="let room of rooms" class="button" (click)="selectRoom(room)">{{room.name}}</button>
-    </mat-sidenav>
-    <mat-sidenav-content class="sidenav-content">
-      <div class="messages-content" >
-        <p *ngFor="let message of roomSelcted.messages"> {{message.nickname}}: {{message.cuerpo}}</p>
-      </div>
-      <div class="form-content">
-        <mat-form-field class="form-field" appearance="outline">
-          <input matInput type="text" class="mensaje" [(ngModel)]="mensaje" (keyup)="$event.keyCode == 13 && sendMessage()">
-        </mat-form-field>
-        <button mat-raised-button (click)="sendMessage()">Enviar</button>
-      </div>
-      
-      
-    </mat-sidenav-content>
-  </mat-sidenav-container>-->
   

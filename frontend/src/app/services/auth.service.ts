@@ -36,7 +36,9 @@ export class AuthService {
       console.log(respuesta);
     })
     .catch(error=>{
-      console.log(error);
+      console.log('errorSaliendoTokenExpirado: ', error);
+      this.logOut();
+      this._router.navigate(['/login']);
     });
   }
 }

@@ -33,6 +33,41 @@ export class GetUsersService {
     .then(res=>res.json());
   }
 
+  getConversaciones(identidad:any){
+    var token:any;
+    if(identidad['token']){
+      token = identidad['token'];
+    }
+    else{
+      token = identidad['nuevotoken'];
+    }
+    let headers= new Headers({
+      'Authorization': token,
+      'Content-type': 'application/json'
+    });
+    let options= new RequestOptions({headers:headers});
+    return this._http.post(this.url + 'conversaciones', identidad, options).toPromise()
+    .then(res=>res.json());
+  }
+
+  getMensajesPrivados(identidad:any, conversacion:any){
+    var token:any;
+    if(identidad['token']){
+      token = identidad['token'];
+    }
+    else{
+      token = identidad['nuevotoken'];
+    }
+    let headers= new Headers({
+      'Authorization': token,
+      'Content-type': 'application/json'
+    });
+    identidad['conversacion']=conversacion
+    let options= new RequestOptions({headers:headers});
+    return this._http.post(this.url + 'mensajesPrivados', identidad, options).toPromise()
+    .then(res=>res.json());
+  }
+
   changeRoomUser(identidad:any, sala:any){
     var token:any;
     if(identidad['token']){

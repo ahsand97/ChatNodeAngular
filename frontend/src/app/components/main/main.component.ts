@@ -5,6 +5,9 @@ import { ChatService } from 'src/app/services/chat.service';
 import { RefreshService } from 'src/app/services/refresh.service';
 import {MatSnackBar} from '@angular/material/snack-bar';
 
+import Swal from 'sweetalert2';
+import { EliminarcuentaService } from 'src/app/services/eliminarcuenta.service';
+
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
@@ -23,14 +26,16 @@ export class MainComponent implements OnInit, OnDestroy {
   mensaje:string;
   messages: string[] = [];
   envio:any;
+  cuentaeliminada:boolean;
 
   constructor(
     private _Auth:AuthService, 
     private _Router:Router, 
     private _chatService:ChatService, 
     private _Refresh:RefreshService,
-    private _snackBar: MatSnackBar
-    ) { }
+    private _snackBar: MatSnackBar,
+    private _DeleteAccount:EliminarcuentaService
+    ) {}
 
   refresh(){
     this._Refresh.refresh(this.identidad)
@@ -52,6 +57,7 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.cuentaeliminada = false;
     this.identidad = this._Auth.getIdentity();
     this._chatService.getNotifications().subscribe((mensaje:any)=>{
       //this.messages.push(mensaje);
@@ -61,8 +67,9 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log("padre destruido.");
-    this._chatService.enviarIdentidadalDesconectar(null,{nickname: this.identidad['nickname'], nombre: this.identidad['nombre']});
+    if (this.cuentaeliminada == false){
+      this._chatService.enviarIdentidadalDesconectar(null,{nickname: this.identidad['nickname'], nombre: this.identidad['nombre']});
+    }
   }
 
   sendMessage(){
@@ -88,6 +95,42 @@ export class MainComponent implements OnInit, OnDestroy {
     SnackBarRef.afterDismissed().subscribe(data=>{
       console.log('snackBarDissmised');
     })
+  }
+
+  alertaEliminar(){
+    Swal.fire({
+      title: 'Estás seguro?',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar cuenta!',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.value) {
+        this._DeleteAccount.deleteAccount(this.identidad)
+        .then(resultado =>{
+          this.cuentaeliminada= true;
+          this._chatService.sendEliminoUsuarioSistema(this.identidad);
+          Swal.fire(
+            'Eliminada!',
+            'Tu cuenta ha sido eliminada.',
+            'success'
+          )
+          .then((result2) =>{
+            this._Auth.logOut();
+            this._Router.navigate(['/login']);
+          })
+        })
+        .catch(error =>{
+          let errorhandler=  error.json();
+          if(errorhandler.id == 1){
+            this._Auth.logOut();
+            this._Router.navigate(['/login']);
+          }
+        })
+        
+      }})
   }
 
 }

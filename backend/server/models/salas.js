@@ -17,7 +17,7 @@ module.exports=(sequelize, DataTypes)=>{
         associate: function(models) {
             Sala.hasMany(models.Usuario, {
                 foreignKey: 'nombre_sala_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
         }
     }});

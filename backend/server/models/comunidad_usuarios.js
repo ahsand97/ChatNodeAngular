@@ -9,7 +9,7 @@ module.exports=(sequelize, DataTypes)=>{
         },
         nicknameUsuario_FK:{
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: 'Usuarios',
                 key: 'nickname'
@@ -17,7 +17,7 @@ module.exports=(sequelize, DataTypes)=>{
         },
         nombreComunidad_FK:{
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: 'Comunidades',
                 key: 'nombre'
@@ -25,16 +25,18 @@ module.exports=(sequelize, DataTypes)=>{
         }
     },
     {
+        freezeTableName: true,
+        tableName: 'Comunidades_Usuarios',
         timestamps:false,
         classMethods:{
         associate: function(models) {
             Comunidad_Usuario.belongsTo(models.Usuario, {
                 foreignKey: 'nicknameUsuario_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
             Comunidad_Usuario.belongsTo(models.Comunidad, {
                 foreignKey: 'nombreComunidad_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
         }
     }});

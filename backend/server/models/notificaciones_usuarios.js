@@ -13,7 +13,7 @@ module.exports=(sequelize, DataTypes)=>{
         },
         idNotificacion_FK:{
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: 'Notificaciones',
                 key: 'id_Notificacion'
@@ -21,7 +21,7 @@ module.exports=(sequelize, DataTypes)=>{
         },
         nicknameUsuario_FK:{
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
             references: {
                 model: 'Usuarios',
                 key: 'nickname'
@@ -29,16 +29,18 @@ module.exports=(sequelize, DataTypes)=>{
         }
     },
     {
+        freezeTableName: true,
+        tableName: 'Notificaciones_Usuarios',
         timestamps: false,
         classMethods:{
         associate: function(models) {
             Notificacion_Usuario.belongsTo(models.Usuario, {
                 foreignKey: 'nicknameUsuario_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
             Notificacion_Usuario.belongsTo(models.Notificacion, {
                 foreignKey: 'idNotificacion_FK',
-                onDelete: 'CASCADE'
+                onDelete: 'SET NULL'
             });
         }
     }});
