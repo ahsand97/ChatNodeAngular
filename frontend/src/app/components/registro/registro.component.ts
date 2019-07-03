@@ -44,7 +44,7 @@ export class RegistroComponent implements OnInit {
     let nuevoUsuario = {'nickname': this.nickname.value, 'nombre': this.nombre.value, 'password': this.password.value};
     this._ServicioRegistro.registrar(nuevoUsuario)
     .then(respuesta=>{
-      this._chatServie.sendNuevoUsuarioSistema({nickname:nuevoUsuario.nickname, nombre:nuevoUsuario.nombre, estado:'false'});
+      this._chatServie.sendNuevoUsuarioSistema({tipo:'global', nickname:nuevoUsuario.nickname, nombre:nuevoUsuario.nombre, estado:'false'});
       this.notificar();
       this._Router.navigate(['/login']);
     })

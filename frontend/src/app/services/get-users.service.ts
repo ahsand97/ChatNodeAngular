@@ -33,6 +33,46 @@ export class GetUsersService {
     .then(res=>res.json());
   }
 
+  guardarMensajeBD(identidad:any, cuerpo:any){
+    var token:any;
+    if(identidad['token']){
+      token = identidad['token'];
+    }
+    else{
+      token = identidad['nuevotoken'];
+    }
+    if(cuerpo){
+      identidad['cuerpo']=cuerpo
+    }
+    let headers= new Headers({
+      'Authorization': token,
+      'Content-type': 'application/json'
+    });
+    let options= new RequestOptions({headers:headers});
+    return this._http.post(this.url + 'sendMensaje', cuerpo, options).toPromise()
+    .then(res=>res.json());
+  }
+
+  crearConversacionBD(identidad:any, cuerpo:any){
+    var token:any;
+    if(identidad['token']){
+      token = identidad['token'];
+    }
+    else{
+      token = identidad['nuevotoken'];
+    }
+    if(cuerpo){
+      identidad['cuerpo']=cuerpo
+    }
+    let headers= new Headers({
+      'Authorization': token,
+      'Content-type': 'application/json'
+    });
+    let options= new RequestOptions({headers:headers});
+    return this._http.post(this.url + 'sendConversacion', cuerpo, options).toPromise()
+    .then(res=>res.json());
+  }
+
   getConversaciones(identidad:any){
     var token:any;
     if(identidad['token']){

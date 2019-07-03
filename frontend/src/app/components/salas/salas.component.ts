@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { Router } from '@angular/router';
@@ -34,10 +34,13 @@ export class SalasComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.identidad = this._Auth.getIdentity();
     this._chatService.enviarIdentidadalConectar(this.roomSelcted.name, {nickname:this.identidad['nickname'], nombre:this.identidad['nombre']});
+    this._GetUsersService.changeRoomUser(this.identidad, this.roomSelcted.name)
+    
     this._chatService.getMessages().subscribe((mensaje:any)=>{
       let sala = parseInt(mensaje.sala[mensaje.sala.length - 1]) - 1;
       this.rooms[sala].messages.push(mensaje);
     });
+
     this._chatService.getUsersConectedSala().subscribe((mensaje:any)=>{
       if(mensaje.nickname != this.identidad.nickname){
         let sala = parseInt(mensaje.sala[mensaje.sala.length - 1]) - 1;
@@ -53,6 +56,7 @@ export class SalasComponent implements OnInit, OnDestroy {
         }
       }
     });
+    
     this._chatService.getUsersDisconectedSala().subscribe((mensaje:any)=>{
       if(mensaje.nickname != this.identidad.nickname){
         let sala = parseInt(mensaje.sala[mensaje.sala.length - 1]) - 1;
@@ -63,6 +67,7 @@ export class SalasComponent implements OnInit, OnDestroy {
         }
        }
     });
+    
     this._GetUsersService.getUsers(this.identidad, this.roomSelcted.name)
     .then(respuesta=>{
       for(let usuario of respuesta['usuariosEnvio']){
@@ -79,10 +84,16 @@ export class SalasComponent implements OnInit, OnDestroy {
       mensaje: ['']
     });
 
-    window.onbeforeunload = () => this.ngOnDestroy();
+    //window.onbeforeunload = () => this.ngOnDestroy();
   }
 
   get message() { return this.mensajeForm.get('mensaje'); }
+
+  @HostListener('window:beforeunload')
+  doSomething() {
+    this.ngOnDestroy();
+  }
+
 
   ngOnDestroy() {
     this._chatService.enviarIdentidadalDesconectar(this.roomSelcted.name ,{nickname: this.identidad['nickname'], nombre: this.identidad['nombre']});

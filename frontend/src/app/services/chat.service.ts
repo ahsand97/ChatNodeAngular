@@ -23,6 +23,18 @@ export class ChatService {
     this.socket.emit('nuevo-mensaje-privado', cuerpo);
   }
 
+  sendMessagePrivateCargar(cuerpo:any){
+    this.socket.emit('nuevo-mensaje-privado-cargar', cuerpo);
+  }
+
+  sendIdentidadLogin(cuerpo:any){
+    this.socket.emit('nuevo-usuario-login', cuerpo);
+  }
+
+  sendIdentidadLogout(cuerpo:any){
+    this.socket.emit('nuevo-usuario-logout', cuerpo);
+  }
+
   sendNuevoUsuarioSistema(cuerpo:any){
     this.socket.emit('nuevo-usuario-sistema', cuerpo);
   }
@@ -55,6 +67,22 @@ export class ChatService {
     this.socket.emit('leave', cuerpo);
   }
 
+  public getUsuarioLogin = () => {
+    return Observable.create((observer) => {
+        this.socket.on('nuevo-usuario-login', (message) => {
+            observer.next(message);
+        });
+    }); 
+  }
+
+  public getUsuarioLogout = () => {
+    return Observable.create((observer) => {
+        this.socket.on('nuevo-usuario-logout', (message) => {
+            observer.next(message);
+        });
+    }); 
+  }
+
   public getNuevaConversacion = () => {
     return Observable.create((observer) => {
         this.socket.on('nueva-conversacion', (message) => {
@@ -66,6 +94,14 @@ export class ChatService {
   public getNuevoUserAlSistema = () => {
     return Observable.create((observer) => {
         this.socket.on('nuevo-usuario-sistema', (message) => {
+            observer.next(message);
+        });
+    }); 
+  }
+
+  public getMessagesPrivadosCargar = () => {
+    return Observable.create((observer) => {
+        this.socket.on('nuevo-mensaje-privado-cargar', (message) => {
             observer.next(message);
         });
     }); 

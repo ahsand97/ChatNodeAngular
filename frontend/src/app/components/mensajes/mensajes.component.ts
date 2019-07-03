@@ -26,10 +26,12 @@ export class MensajesComponent implements OnInit {
 
   ngOnInit() {
     this.identidad = this._Auth.getIdentity();
+    this.conversaciones=[];
     this._getUsers.getUsers(this.identidad, null)
     .then(respuesta=>{
+      console.log(respuesta);
       for(let usuario of respuesta['usuariosEnvio']){
-        this._chatService.sendNuevoUsuarioSistema({nickname:usuario.nickname, nombre:usuario.nombre, estado:usuario.estado});
+        this._chatService.sendNuevoUsuarioSistema({solicitante: this.identidad.nickname, nickname:usuario.nickname, nombre:usuario.nombre, estado:usuario.estado});
       }
     })
     .catch(error=>{
@@ -41,14 +43,27 @@ export class MensajesComponent implements OnInit {
       }
     })
 
+    this._chatService.getNuevoUserAlSistema().subscribe((mensaje:any)=>{
+      if(mensaje.solicitante == this.identidad.nickname){
+        if(mensaje.nickname != this.identidad.nickname){
+          this.users.push(mensaje);
+        }
+      }
+      if(mensaje.tipo == 'global'){
+        if(mensaje.nickname != this.identidad.nickname){
+          this.users.push(mensaje);
+        }
+      }
+    });
+
     this._getUsers.getConversaciones(this.identidad)
     .then(respuesta=>{
       for(let usuario_conversacion of respuesta['usuariosConversacionesEnvio']){
         if(usuario_conversacion.nicknameUsuario1_FK == this.identidad.nickname){
-          this._chatService.enviarNuevaConversacion({origen: this.identidad.nickname, nickname: usuario_conversacion.nicknameUsuario2_FK, idConversacion_FK: usuario_conversacion.idConversacion_FK});
+          this._chatService.enviarNuevaConversacion({tipo: 'carga', solicitante: this.identidad.nickname, nicknameUsuario1_FK: this.identidad.nickname, nicknameUsuario2_FK: usuario_conversacion.nicknameUsuario2_FK, idConversacion_FK: usuario_conversacion.idConversacion_FK});
         }
         else if(usuario_conversacion.nicknameUsuario2_FK == this.identidad.nickname){
-          this._chatService.enviarNuevaConversacion({origen: this.identidad.nickname, nickname: usuario_conversacion.nicknameUsuario1_FK, idConversacion_FK: usuario_conversacion.idConversacion_FK});
+          this._chatService.enviarNuevaConversacion({tipo: 'carga', solicitante: this.identidad.nickname, nicknameUsuario1_FK: usuario_conversacion.nicknameUsuario1_FK, nicknameUsuario2_FK: this.identidad.nickname, idConversacion_FK: usuario_conversacion.idConversacion_FK});
         }
       }
     })
@@ -62,50 +77,43 @@ export class MensajesComponent implements OnInit {
     })
 
     this._chatService.getNuevaConversacion().subscribe((mensaje:any)=>{
-      if(mensaje.origen == this.identidad.nickname){
-        for(let usuarioindex=0; usuarioindex < this.users.length; usuarioindex++){
-          if(mensaje.nickname == this.users[usuarioindex].nickname){
-            mensaje['nombre'] = this.users[usuarioindex].nombre
-            mensaje['estado'] = this.users[usuarioindex].estado
-          }
-        }
-        if(this.conversaciones.length == 0){
-          this.conversaciones.unshift(mensaje);
-        }
-        else{
-          for(let conversacionesindex=0; conversacionesindex < this.conversaciones.length; conversacionesindex++){
-            if(this.conversaciones[conversacionesindex].nickname == mensaje.nickname){
-              this.conversaciones.splice(conversacionesindex,1);
-            }
-          }
-          this.conversaciones.unshift(mensaje);
-        }
-      }
-      else if(mensaje.nickname == this.identidad.nickname){
-        for(let usuarioindex=0; usuarioindex < this.users.length; usuarioindex++){
-          if(mensaje.origen == this.users[usuarioindex].nickname){
-            mensaje['nombre'] = this.users[usuarioindex].nombre
-            mensaje['estado'] = this.users[usuarioindex].estado
-          }
-          if(this.conversaciones.length == 0){
-            this.conversaciones.unshift(mensaje);
-          }
-          else{
-            for(let conversacionesindex=0; conversacionesindex < this.conversaciones.length; conversacionesindex++){
-              if(this.conversaciones[conversacionesindex].origen == mensaje.origen){
-                this.conversaciones.splice(conversacionesindex,1);
+      console.log(mensaje);
+      if(mensaje.tipo == 'carga'){
+        if(mensaje.solicitante == this.identidad.nickname){
+          if(mensaje.nicknameUsuario1_FK == this.identidad.nickname){
+            for(let user of this.users){
+              if(user.nickname == mensaje.nicknameUsuario2_FK){
+                this.conversaciones.unshift({usuario1: this.identidad.nickname, usuario2: mensaje.nicknameUsuario2_FK, idConversacion_FK: mensaje.idConversacion_FK, nombre_usuario_contrario: user.nombre, estado_usuario_contrario: user.estado});
               }
             }
-            this.conversaciones.unshift(mensaje);
+          }
+          if(mensaje.nicknameUsuario2_FK == this.identidad.nickname) {
+            for(let user of this.users){
+              if(user.nickname == mensaje.nicknameUsuario1_FK){
+                this.conversaciones.unshift({usuario1: this.identidad.nickname, usuario2: mensaje.nicknameUsuario1_FK, idConversacion_FK: mensaje.idConversacion_FK, nombre_usuario_contrario: user.nombre, estado_usuario_contrario: user.estado});
+              }
+            }
+          }
+        }
+      }
+      if(mensaje.tipo == 'nueva'){
+        if(mensaje.nicknameUsuario1_FK == this.identidad.nickname ){
+          for(let user of this.users){
+            if(user.nickname == mensaje.nicknameUsuario2_FK){
+              this.conversaciones.unshift({usuario1: this.identidad.nickname, usuario2: mensaje.nicknameUsuario2_FK, idConversacion_FK: mensaje.idConversacion_FK, nombre_usuario_contrario: user.nombre, estado_usuario_contrario: user.estado});
+            }
+          }
+        }
+        if(mensaje.nicknameUsuario2_FK == this.identidad.nickname){
+          for(let user of this.users){
+            if(user.nickname == mensaje.nicknameUsuario1_FK){
+              this.conversaciones.unshift({usuario1: this.identidad.nickname, usuario2: mensaje.nicknameUsuario1_FK, idConversacion_FK: mensaje.idConversacion_FK, nombre_usuario_contrario: user.nombre, estado_usuario_contrario: user.estado});
+            }
           }
         }
       }
     });
-    this._chatService.getNuevoUserAlSistema().subscribe((mensaje:any)=>{
-      if(mensaje.nickname != this.identidad.nickname){
-        this.users.push(mensaje);
-      }
-    });
+
     this._chatService.getEliminoCuentaDelSistema().subscribe((mensaje:any)=>{
       if(mensaje.nickname != this.identidad.nickname){
         for(let indexusuarios=0; indexusuarios<this.users.length; indexusuarios++){
@@ -115,7 +123,7 @@ export class MensajesComponent implements OnInit {
         }
       }
     })
-    this._chatService.getUsersConectedSala().subscribe((mensaje:any)=>{
+    this._chatService.getUsuarioLogin().subscribe((mensaje:any)=>{
       if(mensaje.nickname != this.identidad.nickname){
         for(let indexusuarios=0; indexusuarios<this.users.length; indexusuarios++){
           if(this.users[indexusuarios].nickname == mensaje.nickname){
@@ -123,13 +131,13 @@ export class MensajesComponent implements OnInit {
           }
         }
         for(let indexconversaciones=0; indexconversaciones < this.conversaciones.length; indexconversaciones++){
-          if(this.conversaciones[indexconversaciones].nickname == mensaje.nickname){
-            this.conversaciones[indexconversaciones].estado = 'true'
+          if(this.conversaciones[indexconversaciones].usuario2 == mensaje.nickname){
+            this.conversaciones[indexconversaciones].estado_usuario_contrario = 'true'
           }
         }
       }
     })
-    this._chatService.getUsersDisconectedSala().subscribe((mensaje:any)=>{
+    this._chatService.getUsuarioLogout().subscribe((mensaje:any)=>{
       if(mensaje.nickname != this.identidad.nickname){
         for(let indexusuarios=0; indexusuarios<this.users.length; indexusuarios++){
           if(this.users[indexusuarios].nickname == mensaje.nickname){
@@ -137,15 +145,34 @@ export class MensajesComponent implements OnInit {
           }
         }
         for(let indexconversaciones=0; indexconversaciones < this.conversaciones.length; indexconversaciones++){
-          if(this.conversaciones[indexconversaciones].nickname == mensaje.nickname){
-            this.conversaciones[indexconversaciones].estado = 'false'
+          if(this.conversaciones[indexconversaciones].usuario2 == mensaje.nickname){
+            this.conversaciones[indexconversaciones].estado_usuario_contrario = 'false'
           }
         }
       }
     })
     this._chatService.getMessagesPrivados().subscribe((mensaje:any)=>{
       console.log('mensaje-privado', mensaje);
+      this.messages.push(mensaje);
+      if(mensaje.emisor == this.identidad.nickname){
+        this._getUsers.guardarMensajeBD(this.identidad, mensaje)
+        .then(respuesta=>{
+
+        })
+        .catch(error=>{
+
+        })
+      }
     });
+    this._chatService.getMessages().subscribe((mensaje:any)=>{
+      console.log('nuevo-mensaje', mensaje);
+    });
+    this._chatService.getMessagesPrivadosCargar().subscribe((mensaje:any)=>{
+      console.log('nuevo-mensaje-privado-cargar', mensaje);
+      if(mensaje.solicitante == this.identidad.nickname){
+        this.messages.push(mensaje);
+      }
+    })
     this.mensajeForm = this._formBuilder.group({
       mensaje: ['']
     });
@@ -154,36 +181,87 @@ export class MensajesComponent implements OnInit {
   get message() { return this.mensajeForm.get('mensaje'); }
 
   clickPopup(){
+    this.refresh();
     this.userSelcted='';
   }
 
-  any(){
-    console.log('any');
+  sendMessagePrivado(){
+    this.refresh()
+    let mensaje = this.message.value
+    if (mensaje.length!=0){
+      this._chatService.sendMessagePrivate({emisor: this.identidad.nickname, receptor: this.conversacionSelected.usuario2, body:mensaje, idConversacion_FK:this.conversacionSelected.idConversacion_FK})
+    }
+    this.mensajeForm.patchValue({mensaje:''});
+  }
+
+  IniciarConversacion(){
+    let nueva=true;
+    for(let conversacion of this.conversaciones){
+      if (conversacion.usuario1 == this.identidad.nickname){
+        if(conversacion.usuario2 == this.userSelcted.nickname){
+          nueva=false;
+          this.selectConversacion(conversacion)
+        }
+      }
+      if(conversacion.usuario2 == this.identidad.nickname){
+        if(conversacion.usuario1 == this.userSelcted.nickname){
+          nueva=false
+          this.selectConversacion(conversacion)
+        }
+      }
+    }
+    if(nueva==true){
+      this._getUsers.crearConversacionBD(this.identidad, {usuario1:this.identidad.nickname, usuario2:this.userSelcted.nickname})
+      .then(respuesta=>{
+        respuesta['tipo']='nueva'
+        this._chatService.enviarNuevaConversacion(respuesta);
+        this.selectConversacion(this.conversaciones[0]);
+        //this.selectConversacion(this.conversaciones[0]);
+      })
+      .catch(error=>{
+        console.log(error);
+      })
+    }
+  }
+
+  refresh(){
+    this._Refresh.refresh(this.identidad)
+    .then(respuesta=>{
+      this._Auth.setIdentity(respuesta);
+    })
+    .catch(error=>{
+      console.log(error);
+      this._Auth.logOut();
+      this._Router.navigate(['/login']);
+    })
   }
 
   selectUser(user:any){
+    this.refresh();
     this.userSelcted=user;
-    console.log(this.userSelcted);
   }
 
   selectConversacion(conversacion:any){
+    this.mensajeForm.patchValue({mensaje: ''})
+    this.refresh();
     this.messages=[];
     if(this.conversacionSelected){
-      this._chatService.leaveSala(this.conversacionSelected.origen + this.conversacionSelected.nickname);
-      this._chatService.leaveSala(this.conversacionSelected.nickname + this.conversacionSelected.origen);
+      this._chatService.leaveSala(this.conversacionSelected.usuario1 + this.conversacionSelected.usuario2);
+      this._chatService.leaveSala(this.conversacionSelected.usuario2 + this.conversacionSelected.usuario1);
     }
     this.conversacionSelected=conversacion;
-    this._chatService.joinSala(this.conversacionSelected.origen + this.conversacionSelected.nickname);
-    this._chatService.joinSala(this.conversacionSelected.nickname + this.conversacionSelected.origen);
+    this._chatService.joinSala(this.conversacionSelected.usuario1 + this.conversacionSelected.usuario2);
+    this._chatService.joinSala(this.conversacionSelected.usuario2 + this.conversacionSelected.usuario1);
     this._getUsers.getMensajesPrivados(this.identidad, this.conversacionSelected)
     .then(respuesta=>{
       for (let mensaje of respuesta['mensajesEnvio']){
-        this._chatService.sendMessagePrivate(mensaje);
+        mensaje['solicitante']=this.identidad.nickname;
+        this._chatService.sendMessagePrivateCargar(mensaje);
       }
       //this._chatService.sendMessagePrivate()
     })
     .catch(error=>{
-      console.log('error', error);
+      console.log('error cargando los mensajes privados', error);
     })
   }
 

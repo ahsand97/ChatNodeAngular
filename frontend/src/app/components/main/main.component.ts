@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { ChatService } from 'src/app/services/chat.service';
@@ -40,16 +40,16 @@ export class MainComponent implements OnInit, OnDestroy {
   refresh(){
     this._Refresh.refresh(this.identidad)
     .then(respuesta=>{
-      console.log(respuesta);
       this._Auth.setIdentity(respuesta);
-      this.envio = {nickname:this.identidad['nickname'], cuerpo:this.mensaje};
-      this._chatService.sendMessage(this.envio);
-      this.mensaje = '';
+      //Enviar identidad login
+      this._chatService.sendIdentidadLogin({nickname: respuesta.nickname, nombre: respuesta.nombre});
     })
     .catch(error=>{
       console.log(error);
       let errorhandler = error.json();
       if(errorhandler['id'] == '1'){
+        //Enviar identidad logout
+        this._chatService.sendIdentidadLogout({nickname: this.identidad.nickname, nombre: this.identidad.nombre});
         this._Auth.logOut();
         this._Router.navigate(['/login']);
       }
@@ -59,25 +59,33 @@ export class MainComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.cuentaeliminada = false;
     this.identidad = this._Auth.getIdentity();
+    this.refresh();
     this._chatService.getNotifications().subscribe((mensaje:any)=>{
       //this.messages.push(mensaje);
       this.openSnackBar('Nuevo evento en la comunidad '+mensaje.nombreComunidad_FK,'Ir a comunidades')
     });
-    window.onbeforeunload = () => this.ngOnDestroy();
+    //window.onbeforeunload = () => this.ngOnDestroy();
   }
-
+  @HostListener('window:beforeunload')
+  doSomething() {
+    this.ngOnDestroy();
+  }
+  
   ngOnDestroy() {
     if (this.cuentaeliminada == false){
+      //Me fui de la sala
       this._chatService.enviarIdentidadalDesconectar(null,{nickname: this.identidad['nickname'], nombre: this.identidad['nombre']});
+      //Logout
+      //this._Auth.logoutToDB();
     }
-  }
-
-  sendMessage(){
-    this.refresh();
+    //Enviar identidad logout
+    this._chatService.sendIdentidadLogout({nickname: this.identidad.nickname, nombre: this.identidad.nombre});
   }
 
   logOut(){
     this._Auth.logoutToDB();
+    //Enviar identidad logout
+    this._chatService.sendIdentidadLogout({nickname: this.identidad.nickname, nombre: this.identidad.nombre});
     this._Auth.logOut();
     this._Router.navigate(['/login']);
   }

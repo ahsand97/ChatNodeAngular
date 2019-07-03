@@ -27,14 +27,24 @@ socketio.on('connection', function(socket){
         console.log('desconectado', cuerpa);
     });
 
+    socket.on('nuevo-usuario-login', function(cuerpa){
+        socketio.emit('nuevo-usuario-login', cuerpa);
+        console.log('nuevo-usuario-login', cuerpa);
+    });
+
+    socket.on('nuevo-usuario-logout', function(cuerpa){
+        socketio.emit('nuevo-usuario-logout', cuerpa);
+        console.log('nuevo-usuario-logout', cuerpa);
+    });
+
     socket.on('nuevo-usuario-sistema', function(cuerpa){
         socketio.emit('nuevo-usuario-sistema', cuerpa);
-        console.log('nuevo-usuario-sistema', cuerpa);
+        //console.log('nuevo-usuario-sistema', cuerpa);
     });
 
     socket.on('elimino-usuario-sistema', function(cuerpa){
         socketio.emit('elimino-usuario-sistema', cuerpa);
-        console.log('nuevo-usuario-sistema', cuerpa);
+        //console.log('elimino-usuario-sistema', cuerpa);
     });
 
     socket.on('nueva-conversacion', function(cuerpa){
@@ -55,17 +65,25 @@ socketio.on('connection', function(socket){
     });
 
     socket.on('nuevo-mensaje-privado', function(cuerpo){
-        console.log('nuevo-mensaje-privado',cuerpo);
+        //console.log('nuevo-mensaje-privado',cuerpo);
+        let today = new Date();
+        let time =  (today.getDate()<10?'0':'') + today.getDate() + "/" + (today.getMonth()<10?'0':'')+ + (today.getMonth()+1) + "/" + today.getFullYear() + " " + (today.getHours()<10?'0':'') + today.getHours() + ":" + (today.getMinutes()<10?'0':'') + today.getMinutes() + ":" + (today.getSeconds()<10?'0':'') + today.getSeconds();
+        cuerpo['fecha_hora']=time
         socketio.in(cuerpo.emisor+cuerpo.receptor).emit('nuevo-mensaje-privado', cuerpo);
         socketio.in(cuerpo.emisor+cuerpo.receptor).clients((error, clients) => {
             if (error) throw error;
             if (clients.length == 1){
-                console.log("notificar al otro");
+                //console.log("notificar al otro");
             } // => [PZDoMHjiu8PYfRiKAAAF, Anw2LatarvGVVXEIAAAD]
           });
         //socketio.emit('nuevo-mensaje-privado', cuerpo);
     });
 
+    socket.on('nuevo-mensaje-privado-cargar', function(cuerpo){
+        console.log('nuevo-mensaje-privado-cargar',cuerpo);
+        socketio.in(cuerpo.emisor+cuerpo.receptor).emit('nuevo-mensaje-privado-cargar', cuerpo);
+        //socketio.emit('nuevo-mensaje-privado', cuerpo);
+    });
 
     socket.on('join', function(sala){
         console.log("Se ha unido a la ", sala, socket.id);

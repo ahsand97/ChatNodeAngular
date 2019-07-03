@@ -23,7 +23,7 @@ export class GuardService implements CanActivate{
         })
         .catch(error=>{
           console.log(error);
-            this._auth.logoutToDB();
+            //this._auth.logoutToDB();
             this._auth.logOut();
             this._router.navigate(['/login']);
         })
@@ -36,7 +36,7 @@ export class GuardService implements CanActivate{
         })
         .catch(error=>{
           console.log(error);
-          this._auth.logoutToDB();
+          //this._auth.logoutToDB();
           this._auth.logOut();
           this._router.navigate(['/login']);
           }

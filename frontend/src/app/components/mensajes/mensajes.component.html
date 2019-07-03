@@ -8,17 +8,17 @@
       <div class="list-group list-group-flush" style="text-align: center;">
           <button style="text-align: center; color: #3A01DF;" *ngFor="let conversacion of conversaciones" class="list-group-item list-group-item-action bg-light botones" [attr.id]="conversacion.nickname" (click)="selectConversacion(conversacion)">
             <h2>Nickname: 
-              <h2 style="color:darkslategrey; display: inline;">{{conversacion.nickname}}</h2>
+              <h2 style="color:darkslategrey; display: inline;">{{conversacion.usuario2}}</h2>
               <h6 style="color: #b4542b;">Nombre: 
-                <h6 style="color: darkslategrey; display: inline;">{{conversacion.nombre}}</h6>
-                <h6 style="color: #004130;">Estado: 
-                  <ng-container *ngIf="conversacion.estado === 'true'; else condicionFalsa">
+                <h6 style="color: darkslategrey; display: inline;">{{conversacion.nombre_usuario_contrario}}</h6>
+                <!--<h6 style="color: #004130;">Estado: 
+                  <ng-container *ngIf="conversacion.estado_usuario_contrario === 'true'; else condicionFalsa">
                       <h6 style="color: green; display: inline;">Conectado</h6>
                   </ng-container>
                   <ng-template #condicionFalsa>
                       <h6 style="color: red; display: inline;">Desconectado</h6>
                   </ng-template>
-                </h6>
+                </h6>-->
               </h6>
             </h2>
           </button>
@@ -42,14 +42,14 @@
                       <h2 style="color:darkslategrey; display: inline;">{{user.nickname}}</h2>
                       <h6 style="color: #b4542b;">Nombre: 
                         <h6 style="color: darkslategrey; display: inline;">{{user.nombre}}</h6>
-                        <h6 style="color: #004130;">Estado: 
+                        <!--<h6 style="color: #004130;">Estado: 
                           <ng-container *ngIf="user.estado === 'true'; else condicionFalsa">
                               <h6 style="color: green; display: inline;">Conectado</h6>
                           </ng-container>
                           <ng-template #condicionFalsa>
                               <h6 style="color: red; display: inline;">Desconectado</h6>
                           </ng-template>
-                        </h6>
+                        </h6>-->
                       </h6>
                     </h2>
                   </button>
@@ -61,14 +61,14 @@
                         <h2 style="color:darkslategrey; display: inline;">{{userSelcted.nickname}}</h2>
                         <h6 style="color: #b4542b;">Nombre: 
                           <h6 style="color: darkslategrey; display: inline;">{{userSelcted.nombre}}</h6>
-                          <h6 style="color: #004130;">Estado: 
+                          <!--<h6 style="color: #004130;">Estado: 
                             <ng-container *ngIf="userSelcted.estado === 'true'; else condicionFalsa">
                                 <h6 style="color: green; display: inline;">Conectado</h6>
                             </ng-container>
                             <ng-template #condicionFalsa>
                                 <h6 style="color: red; display: inline;">Desconectado</h6>
                             </ng-template>
-                          </h6>
+                          </h6>-->
                         </h6>
                       </h2>
                     </div>
@@ -77,7 +77,7 @@
               </div>
             </div>
             <div class="modal-footer d-flex justify-content-center">
-              <button mat-raised-button color="primary" (click)="any()" [disabled]="!userSelcted">Iniciar Conversación</button>
+              <button mat-raised-button color="primary" data-dismiss="modal" (click)="IniciarConversacion()" [disabled]="!userSelcted">Iniciar Conversación</button>
             </div>
           </div>
         </div>
@@ -91,20 +91,31 @@
             <h2 style="text-align: center">Selecciona una conversación o inicia una nueva!.</h2>
           </ng-container>
           <ng-template #condicionFalsaConversacion>
-            <h1 style="text-align: center; opacity: 0.3;">Mensajes con {{conversacionSelected.nickname}}</h1>
+            <h1 style="text-align: center; opacity: 0.3;">Mensajes con {{conversacionSelected.usuario2}}</h1>
           </ng-template>
           <br>
-          <!--<ng-container *ngFor="let message of roomSelcted.messages">
-            <ng-container *ngIf="message.nickname === identidad.nickname; else condicionFalsa">
-              <h4 style="text-align: right; padding-right: 20px;">->{{message.nickname}}:<h6 style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color:brown; margin-left: 28px; margin-bottom: -5px;">{{message.cuerpo}}</h6></h4>
-              <h5 style="text-align: right; padding-right: 20px; font-size: 12px;">{{message.time}}</h5>
+
+          <ng-container *ngFor="let message of messages">
+            <ng-container *ngIf="message.emisor === identidad.nickname; else condicionFalsa">
+              <h4 style="text-align: right; padding-right: 20px;">->{{message.emisor}}:
+                <h6 style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color:brown; margin-left: 28px; margin-bottom: -5px;">
+                  {{message.body}}
+                </h6>
+              </h4>
+              <h5 style="text-align: right; padding-right: 20px; font-size: 12px;">{{message.fecha_hora}}</h5>
             </ng-container>
             <ng-template #condicionFalsa>
-              <h4 style="padding-left: 20px;">->{{message.nickname}}:<h6 style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color:brown; margin-left: 28px;">{{message.cuerpo}}</h6></h4>
+              <h4 style="padding-left: 20px;">->{{message.emisor}}:
+                <h6 style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color:brown; margin-left: 28px; margin-bottom: -5px;">
+                  {{message.body}}
+                </h6>
+              </h4>
+              <h5 style="text-align: left; padding-left: 45px; font-size: 12px;">{{message.fecha_hora}}</h5>
             </ng-template>
-          </ng-container>-->
+          </ng-container>
+
         </div>
-        <form [formGroup]="mensajeForm" (ngSubmit)="any()" autocomplete="off">
+        <form [formGroup]="mensajeForm" (ngSubmit)="sendMessagePrivado()" autocomplete="off">
           <div class="form-content">
             <mat-form-field class="form-field" appearance="outline">
               <input matInput type="text" class="mensaje" formControlName="mensaje" placeholder="Escribe un mensaje">

@@ -164,6 +164,9 @@ sala3=Salas(nombre="Sala 3", descripcion="Sala 3 por defecto.")
 sala4=Salas(nombre="Sala 4", descripcion="Sala 4 por defecto.")
 sala5=Salas(nombre="Sala 5", descripcion="Sala 5 por defecto.")
 
+comunidad1=Comunidades(nombre="Comunidad cristiana", descripcion="Que viva yisus")
+
+session1.add(comunidad1)
 session1.add(salaNull)
 session1.add(sala1)
 session1.add(sala2)
@@ -176,11 +179,14 @@ usuario1=Usuarios(nickname="reydali", nombre="Luis David", password="reydali")
 usuario2=Usuarios(nickname="sara", nombre="SaraJn", password="sara")
 usuario3=Usuarios(nickname="nectar", nombre="Francisca Thompson", password="nectar")
 usuario4=Usuarios(nickname="burra", nombre="Laburra", password="burra")
+usuario5=Usuarios(nickname="pepegranjero", nombre="LuisDa", password="pepegranjero")
 
 session1.add(usuario1)
 session1.add(usuario2)
 session1.add(usuario3)
 session1.add(usuario4)
+session1.add(usuario5)
+
 session1.commit()
 
 conversaion1=Conversaciones(usuario_1="reydali", usuario_2="sara")
