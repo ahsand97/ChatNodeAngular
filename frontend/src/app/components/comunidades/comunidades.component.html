@@ -1,28 +1,30 @@
 <body>
-    <div class="d-flex" id="wrapper" >
+    <div  class="d-flex" id="wrapper" >
 
       <div class="bg-light border-right" id="sidebar-wrapper">
-          <h3 style="text-align: center; width: 100%; color:blue;">Salas</h3>
+          <h3 style="text-align: center; width: 100%; color:blue;">Comunidades</h3>
         <div class="list-group list-group-flush" style="text-align: center;">
           <button style="color: #3A01DF;" *ngFor="let community of communities" class="list-group-item list-group-item-action bg-light botones" [attr.id]="community.nombre" (click)="SelectCommunity(community)"><h2>{{community.nombre}}</h2></button>
         </div>
       </div>
-      <div id="page-content-wrapper" class="show-events">
+      <div  id="page-content-wrapper" class="show-events">
             <div class="messages-content" >
               <h1 style="text-align: center; opacity: 0.3;">Eventos {{communitySelected.nombre}}</h1>
-              <div *ngFor="let event of communitySelected.events; let i=index">
-                <h6>Evento {{i}}</h6>
-                <p>Nombre del evento : {{event.nombre}}</p>
-                <p>Descripcion : {{event.descripcion}}</p>
-                <p>Fecha : {{event.fecha}}</p>
-              </div>
+              <div *ngIf="communitySelected.belonged">
+                <div *ngFor="let event of communitySelected.events; let i=index">
+                  <h6>Evento {{i}}</h6>
+                  <p>Nombre del evento : {{event.nombre}}</p>
+                  <p>Descripcion : {{event.descripcion}}</p>
+                  <p>Fecha : {{event.fecha}}</p>
+                </div>
+            </div>
                 
               
             </div>
             
             
       </div>
-      <div class="create-event">
+      <div *ngIf="communitySelected.belonged" class="create-event">
           <h4>Crear Evento</h4>
           <p></p>
           <div class="form-content">
@@ -52,6 +54,10 @@
             
               </form>
             </div>
+      </div>
+      <div *ngIf="!communitySelected.belonged">
+          <h4>Aún no perteneces a esta comunidad, ¿Deseas Unirte?</h4>
+        <button class="btn btn-danger" (click)="joinComunity()">Unirse</button>
       </div>
       </div>
       <!-- /#page-content-wrapper -->

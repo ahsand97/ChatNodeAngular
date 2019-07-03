@@ -9,4 +9,5 @@ module.exports=(app)=>{
     app.post('/api/usuarios', usuariosController.getAll);
     app.post('/api/changeroom', usuariosController.changeRoom);
     app.post('/api/deleteAccount', usuariosController.deleteAccount);
+    app.post('/api/communitiesUser', usuariosController.comunitiesUser);
 }

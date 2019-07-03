@@ -59,10 +59,15 @@ socketio.on('connection', function(socket){
         socketio.emit('nuevo-mensaje', cuerpo);
     });
 
-    socket.on('nuevo-evento', function(cuerpo){
-        console.log(cuerpo);
-        socket.broadcast.emit('nuevo-evento', cuerpo);
+    socket.on('nuevo-evento', function(comunidad, cuerpo){
+        console.log(cuerpo, comunidad);
+        //socketio.in(comunidad).emit('nuevo-evento', cuerpo);
+        socket.to(comunidad).emit('nuevo-evento', cuerpo);
     });
+
+    socket.on('join-into-community', function(comunidad){
+        socket.join(comunidad);
+    })
 
     socket.on('nuevo-mensaje-privado', function(cuerpo){
         //console.log('nuevo-mensaje-privado',cuerpo);

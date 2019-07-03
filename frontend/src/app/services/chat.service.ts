@@ -43,8 +43,12 @@ export class ChatService {
     this.socket.emit('elimino-usuario-sistema', cuerpo)
   }
 
-  sendEvent(message:any){
-    this.socket.emit('nuevo-evento', message);
+  sendEvent(community:any, message:any){
+    this.socket.emit('nuevo-evento', community, message);
+  }
+
+  joinCommunity(community:string){
+    this.socket.emit('join-into-community', community);
   }
 
   enviarIdentidadalConectar(sala:any, cuerpo:any){

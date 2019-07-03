@@ -5,6 +5,8 @@ import { ChatService } from 'src/app/services/chat.service';
 import { RefreshService } from 'src/app/services/refresh.service';
 import { ComunidadesService } from 'src/app/services/comunidades.service';
 import { EventosService } from 'src/app/services/eventos.service';
+import { UsuarioComunidadesService } from 'src/app/services/usuario-comunidades.service';
+import { UsuariosService } from 'src/app/services/usuarios.service';
 
 @Component({
   selector: 'app-comunidades',
@@ -14,8 +16,9 @@ import { EventosService } from 'src/app/services/eventos.service';
 export class ComunidadesComponent implements OnInit {
 
   communities = [];
+  userCommunities = [];
 
-  communitySelected:any = {nombre:'Tupu Tama Dre', events:[]};
+  communitySelected:any = {nombre:'Tupu Tama Dre', events:[], belonged:false};
   //events:string[] = [];
   identidad:any;
   envio: { nickname: any; cuerpo: any; sala:any;};
@@ -23,17 +26,31 @@ export class ComunidadesComponent implements OnInit {
 
   dataEvent:any={};
 
-  constructor(private _Auth:AuthService, private _Router:Router, private _chatService:ChatService, private _Refresh:RefreshService, private _Communities:ComunidadesService, private _Events:EventosService) { }
+  constructor(
+    private _Auth:AuthService, 
+    private _Router:Router, 
+    private _chatService:ChatService, 
+    private _Refresh:RefreshService, 
+    private _Communities:ComunidadesService, 
+    private _Events:EventosService, 
+    private _User_Community:UsuarioComunidadesService,
+    private _UserService:UsuariosService
+    ) { }
 
   ngOnInit() {
     this.identidad = this._Auth.getIdentity();
+    this.getCommunitiesUSer();
     this._Communities.getCommunities(this.identidad)
     .then(respuesta=>{
       for (let comunidad of respuesta['comunidadesEnvio']){
-        this.communities.push({nombre:comunidad.nombre, events:[]});
+        let belonged = false;
+        if(this.userCommunities.indexOf(comunidad.nombre) >= 0){
+          belonged = true;
+        }
+        this.communities.push({nombre:comunidad.nombre, events:[], belonged});
       }
       this.SelectCommunity(this.communities[0]);
-      console.log("Comunidad ", this.communities);
+      console.log("Comunidades ", this.communities);
     })
     .catch(error=>{
       console.log('errorServer', error);
@@ -66,7 +83,7 @@ export class ComunidadesComponent implements OnInit {
       this._Events.createEvent(this.identidad, this.dataEvent)
       .then(response=>{
         console.log(response);
-        this._chatService.sendEvent(response.event);
+        this._chatService.sendEvent(this.communitySelected.nombre, response.event);
         for(let i=0; i<this.communities.length;i++){
           if(response.event.nombreComunidad_FK == this.communities[i].nombre){
             this.communities[i].events.push(response.event);
@@ -112,6 +129,36 @@ export class ComunidadesComponent implements OnInit {
     })
     console.log(this.communitySelected);
     //this._chatService.joinSala(this.communitySelected.nombre);
+  }
+
+  getCommunitiesUSer(){
+    this._UserService.getCommunitiesUser(this.identidad)
+    .then(response=>{
+      console.log("user communities", response);
+      this.userCommunities = response.comms;
+      this.userCommunities.forEach(element => {
+        this._chatService.joinCommunity(element);
+      });
+    })
+    .catch(err=>{
+      console.log(err);
+    })
+  }
+
+  joinComunity(){
+    console.log(this.identidad);
+    let data = {
+      nickname:this.identidad.nickname,
+      comunidad:this.communitySelected.nombre
+    };
+    this._User_Community.createUser_Community(this.identidad,data)
+    .then(response=>{
+      console.log(response);
+      this._chatService.joinCommunity(this.communitySelected.nombre);
+    })
+    .catch(err=>{
+      console.log(err);
+    })
   }
 
 }
