@@ -6,11 +6,13 @@ import { RefreshService } from 'src/app/services/refresh.service';
 import { GetUsersService } from 'src/app/services/get-users.service';
 import { FormGroup, FormBuilder } from '@angular/forms';
 
+
 @Component({
   selector: 'app-salas',
   templateUrl: './salas.component.html',
   styleUrls: ['./salas.component.css']
 })
+
 export class SalasComponent implements OnInit, OnDestroy {
   mensajeForm: FormGroup;
 
@@ -27,7 +29,10 @@ export class SalasComponent implements OnInit, OnDestroy {
   envio: { nickname: any; cuerpo: any; sala:any;};
   mensaje: string;
 
-
+  ObservadorMensajesSalas:any;
+  ObservadorUsuariosConectadosSala:any;
+  ObservadorUsuariosDesconectadosSala:any;
+  ObservadorNotificacionMensajePrivado:any;
 
   constructor(private _GetUsersService:GetUsersService, private _Auth:AuthService, private _Router:Router, private _chatService:ChatService, private _Refresh:RefreshService, private _formBuilder:FormBuilder) { }
 
@@ -36,12 +41,12 @@ export class SalasComponent implements OnInit, OnDestroy {
     this._chatService.enviarIdentidadalConectar(this.roomSelcted.name, {nickname:this.identidad['nickname'], nombre:this.identidad['nombre']});
     this._GetUsersService.changeRoomUser(this.identidad, this.roomSelcted.name)
     
-    this._chatService.getMessages().subscribe((mensaje:any)=>{
+    this.ObservadorMensajesSalas = this._chatService.getMessages().subscribe((mensaje:any)=>{
       let sala = parseInt(mensaje.sala[mensaje.sala.length - 1]) - 1;
       this.rooms[sala].messages.push(mensaje);
     });
 
-    this._chatService.getUsersConectedSala().subscribe((mensaje:any)=>{
+    this.ObservadorUsuariosConectadosSala = this._chatService.getUsersConectedSala().subscribe((mensaje:any)=>{
       if(mensaje.nickname != this.identidad.nickname){
         let sala = parseInt(mensaje.sala[mensaje.sala.length - 1]) - 1;
         if(this.rooms[sala].users.length == 0){
@@ -57,7 +62,7 @@ export class SalasComponent implements OnInit, OnDestroy {
       }
     });
     
-    this._chatService.getUsersDisconectedSala().subscribe((mensaje:any)=>{
+    this.ObservadorUsuariosDesconectadosSala = this._chatService.getUsersDisconectedSala().subscribe((mensaje:any)=>{
       if(mensaje.nickname != this.identidad.nickname){
         let sala = parseInt(mensaje.sala[mensaje.sala.length - 1]) - 1;
         for(let usuario=0; usuario < this.rooms[sala].users.length; usuario++){
@@ -68,6 +73,14 @@ export class SalasComponent implements OnInit, OnDestroy {
        }
     });
     
+    this.ObservadorNotificacionMensajePrivado = this._chatService.getNotificacionMensajePrivado().subscribe((mensaje:any)=>{
+      //console.log(mensaje);
+
+      if(mensaje.receptor == this.identidad.nickname){
+
+      }
+    });
+
     this._GetUsersService.getUsers(this.identidad, this.roomSelcted.name)
     .then(respuesta=>{
       for(let usuario of respuesta['usuariosEnvio']){
@@ -99,7 +112,15 @@ export class SalasComponent implements OnInit, OnDestroy {
     this._chatService.enviarIdentidadalDesconectar(this.roomSelcted.name ,{nickname: this.identidad['nickname'], nombre: this.identidad['nombre']});
     if (this._Auth.getIdentity()){
       this._GetUsersService.changeRoomUser(this.identidad, 'SalaNull');
-    }  
+    }
+    this._chatService.disconnect();
+
+    this.ObservadorMensajesSalas.unsubscribe();
+    this.ObservadorUsuariosConectadosSala.unsubscribe();
+    this.ObservadorUsuariosDesconectadosSala.unsubscribe();
+    this.ObservadorNotificacionMensajePrivado.unsubscribe();
+
+    
   }
 
   refresh(){

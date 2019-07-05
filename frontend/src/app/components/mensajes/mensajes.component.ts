@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { GetUsersService } from 'src/app/services/get-users.service';
 import { Router } from '@angular/router';
 import { ChatService } from 'src/app/services/chat.service';
@@ -11,7 +11,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
   templateUrl: './mensajes.component.html',
   styleUrls: ['./mensajes.component.css']
 })
-export class MensajesComponent implements OnInit {
+export class MensajesComponent implements OnInit, OnDestroy {
   mensajeForm:FormGroup;
   identidad:any;
   users=[];
@@ -22,14 +22,24 @@ export class MensajesComponent implements OnInit {
 
   messages=[];
 
+  ObservadorMensajesPrivados:any;
+  ObservadorNuevoUsuarioSistema:any;
+  ObservadorNuevasConversaciones:any;
+  ObservadorCuentaEliminadaSistema:any;
+  ObservadorUsuarioHizoLogin:any;
+  ObservadorUsuarioHizoLogout:any;
+  ObservadorMensajesGenerales:any;
+  ObservadorMensajesPrivadosCargar:any;
+
   constructor(private _Auth:AuthService, private _Router:Router, private _chatService:ChatService, private _Refresh:RefreshService, private _getUsers:GetUsersService, private _formBuilder:FormBuilder) { }
 
   ngOnInit() {
     this.identidad = this._Auth.getIdentity();
     this.conversaciones=[];
+
     this._getUsers.getUsers(this.identidad, null)
     .then(respuesta=>{
-      console.log(respuesta);
+      //console.log(respuesta);
       for(let usuario of respuesta['usuariosEnvio']){
         this._chatService.sendNuevoUsuarioSistema({solicitante: this.identidad.nickname, nickname:usuario.nickname, nombre:usuario.nombre, estado:usuario.estado});
       }
@@ -43,7 +53,7 @@ export class MensajesComponent implements OnInit {
       }
     })
 
-    this._chatService.getNuevoUserAlSistema().subscribe((mensaje:any)=>{
+    this.ObservadorNuevoUsuarioSistema = this._chatService.getNuevoUserAlSistema().subscribe((mensaje:any)=>{
       if(mensaje.solicitante == this.identidad.nickname){
         if(mensaje.nickname != this.identidad.nickname){
           this.users.push(mensaje);
@@ -76,8 +86,8 @@ export class MensajesComponent implements OnInit {
       }
     })
 
-    this._chatService.getNuevaConversacion().subscribe((mensaje:any)=>{
-      console.log(mensaje);
+    this.ObservadorNuevasConversaciones = this._chatService.getNuevaConversacion().subscribe((mensaje:any)=>{
+      //console.log(mensaje);
       if(mensaje.tipo == 'carga'){
         if(mensaje.solicitante == this.identidad.nickname){
           if(mensaje.nicknameUsuario1_FK == this.identidad.nickname){
@@ -114,7 +124,7 @@ export class MensajesComponent implements OnInit {
       }
     });
 
-    this._chatService.getEliminoCuentaDelSistema().subscribe((mensaje:any)=>{
+    this.ObservadorCuentaEliminadaSistema = this._chatService.getEliminoCuentaDelSistema().subscribe((mensaje:any)=>{
       if(mensaje.nickname != this.identidad.nickname){
         for(let indexusuarios=0; indexusuarios<this.users.length; indexusuarios++){
           if(this.users[indexusuarios].nickname == mensaje.nickname){
@@ -123,7 +133,8 @@ export class MensajesComponent implements OnInit {
         }
       }
     })
-    this._chatService.getUsuarioLogin().subscribe((mensaje:any)=>{
+
+    this.ObservadorUsuarioHizoLogin = this._chatService.getUsuarioLogin().subscribe((mensaje:any)=>{
       if(mensaje.nickname != this.identidad.nickname){
         for(let indexusuarios=0; indexusuarios<this.users.length; indexusuarios++){
           if(this.users[indexusuarios].nickname == mensaje.nickname){
@@ -137,7 +148,8 @@ export class MensajesComponent implements OnInit {
         }
       }
     })
-    this._chatService.getUsuarioLogout().subscribe((mensaje:any)=>{
+
+    this.ObservadorUsuarioHizoLogout = this._chatService.getUsuarioLogout().subscribe((mensaje:any)=>{
       if(mensaje.nickname != this.identidad.nickname){
         for(let indexusuarios=0; indexusuarios<this.users.length; indexusuarios++){
           if(this.users[indexusuarios].nickname == mensaje.nickname){
@@ -151,31 +163,58 @@ export class MensajesComponent implements OnInit {
         }
       }
     })
-    this._chatService.getMessagesPrivados().subscribe((mensaje:any)=>{
+
+    this.ObservadorMensajesPrivados = this._chatService.getMessagesPrivados().subscribe((mensaje:any)=>{
       console.log('mensaje-privado', mensaje);
       this.messages.push(mensaje);
       if(mensaje.emisor == this.identidad.nickname){
-        this._getUsers.guardarMensajeBD(this.identidad, mensaje)
+        /*this._getUsers.guardarMensajeBD(this.identidad, mensaje)
         .then(respuesta=>{
 
         })
         .catch(error=>{
 
-        })
+        })*/
       }
     });
-    this._chatService.getMessages().subscribe((mensaje:any)=>{
+
+    this.ObservadorMensajesGenerales = this._chatService.getMessages().subscribe((mensaje:any)=>{
       console.log('nuevo-mensaje', mensaje);
     });
-    this._chatService.getMessagesPrivadosCargar().subscribe((mensaje:any)=>{
-      console.log('nuevo-mensaje-privado-cargar', mensaje);
+
+    this.ObservadorMensajesPrivadosCargar = this._chatService.getMessagesPrivadosCargar().subscribe((mensaje:any)=>{
+      //console.log('nuevo-mensaje-privado-cargar', mensaje);
       if(mensaje.solicitante == this.identidad.nickname){
         this.messages.push(mensaje);
       }
-    })
+    });
+
     this.mensajeForm = this._formBuilder.group({
       mensaje: ['']
     });
+  }
+
+  @HostListener('window:beforeunload')
+  doSomething() {
+    this.ngOnDestroy();
+    
+  }
+
+  ngOnDestroy(){
+    if(this.conversacionSelected){
+      this._chatService.leaveSala(this.conversacionSelected.usuario1 + this.conversacionSelected.usuario2);
+      this._chatService.leaveSala(this.conversacionSelected.usuario2 + this.conversacionSelected.usuario1);
+    }
+    this._chatService.disconnect();
+    
+    this.ObservadorMensajesPrivados.unsubscribe();
+    this.ObservadorNuevoUsuarioSistema.unsubscribe();
+    this.ObservadorCuentaEliminadaSistema.unsubscribe();
+    this.ObservadorUsuarioHizoLogin.unsubscribe();
+    this.ObservadorUsuarioHizoLogout.unsubscribe();
+    this.ObservadorMensajesGenerales.unsubscribe();
+    this.ObservadorMensajesPrivadosCargar.unsubscribe();
+
   }
 
   get message() { return this.mensajeForm.get('mensaje'); }

@@ -15,6 +15,10 @@ export class ChatService {
     this.socket = socketIO(this.url);
   }
 
+  disconnect(){
+    this.socket.emit('disconnect');
+  }
+
   sendMessage(cuerpo:any){
     this.socket.emit('nuevo-mensaje', cuerpo);
   }
@@ -74,6 +78,14 @@ export class ChatService {
   public getUsuarioLogin = () => {
     return Observable.create((observer) => {
         this.socket.on('nuevo-usuario-login', (message) => {
+            observer.next(message);
+        });
+    }); 
+  }
+
+  public getNotificacionMensajePrivado = () => {
+    return Observable.create((observer) => {
+        this.socket.on('nueva-notificacion-mensaje-privado', (message) => {
             observer.next(message);
         });
     }); 

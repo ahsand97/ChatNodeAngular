@@ -70,22 +70,24 @@ socketio.on('connection', function(socket){
     })
 
     socket.on('nuevo-mensaje-privado', function(cuerpo){
-        //console.log('nuevo-mensaje-privado',cuerpo);
+        console.log('nuevo-mensaje-privado',cuerpo);
         let today = new Date();
         let time =  (today.getDate()<10?'0':'') + today.getDate() + "/" + (today.getMonth()<10?'0':'')+ + (today.getMonth()+1) + "/" + today.getFullYear() + " " + (today.getHours()<10?'0':'') + today.getHours() + ":" + (today.getMinutes()<10?'0':'') + today.getMinutes() + ":" + (today.getSeconds()<10?'0':'') + today.getSeconds();
         cuerpo['fecha_hora']=time
         socketio.in(cuerpo.emisor+cuerpo.receptor).emit('nuevo-mensaje-privado', cuerpo);
         socketio.in(cuerpo.emisor+cuerpo.receptor).clients((error, clients) => {
+            //console.log('tamaño', clients.length)
             if (error) throw error;
             if (clients.length == 1){
-                //console.log("notificar al otro");
+                //console.log("------notificar al otro-----------");
+                //socketio.emit('nueva-notificacion-mensaje-privado', cuerpo);
             } // => [PZDoMHjiu8PYfRiKAAAF, Anw2LatarvGVVXEIAAAD]
           });
         //socketio.emit('nuevo-mensaje-privado', cuerpo);
     });
 
     socket.on('nuevo-mensaje-privado-cargar', function(cuerpo){
-        console.log('nuevo-mensaje-privado-cargar',cuerpo);
+        //console.log('nuevo-mensaje-privado-cargar',cuerpo);
         socketio.in(cuerpo.emisor+cuerpo.receptor).emit('nuevo-mensaje-privado-cargar', cuerpo);
         //socketio.emit('nuevo-mensaje-privado', cuerpo);
     });

@@ -13,7 +13,7 @@ import { EliminarcuentaService } from 'src/app/services/eliminarcuenta.service';
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
-export class MainComponent implements OnInit, OnDestroy {
+export class MainComponent implements OnInit /*OnDestroy*/ {
 
   links = [
     {path:'salas', label:'Salas'},
@@ -27,6 +27,9 @@ export class MainComponent implements OnInit, OnDestroy {
   messages: string[] = [];
   envio:any;
   cuentaeliminada:boolean;
+
+  ObservadorNotificaciones:any;
+
 
   constructor(
     private _Auth:AuthService, 
@@ -60,12 +63,13 @@ export class MainComponent implements OnInit, OnDestroy {
     this.cuentaeliminada = false;
     this.identidad = this._Auth.getIdentity();
     this.refresh();
-    this._chatService.getNotifications().subscribe((mensaje:any)=>{
+    this.ObservadorNotificaciones = this._chatService.getNotifications().subscribe((mensaje:any)=>{
       //this.messages.push(mensaje);
       this.openSnackBar('Nuevo evento en la comunidad '+mensaje.nombreComunidad_FK,'Ir a comunidades')
     });
     //window.onbeforeunload = () => this.ngOnDestroy();
   }
+  
   @HostListener('window:beforeunload')
   doSomething() {
     this.ngOnDestroy();
@@ -78,8 +82,9 @@ export class MainComponent implements OnInit, OnDestroy {
       //Logout
       //this._Auth.logoutToDB();
     }
-    //Enviar identidad logout
     this._chatService.sendIdentidadLogout({nickname: this.identidad.nickname, nombre: this.identidad.nombre});
+    this._chatService.disconnect();
+    this.ObservadorNotificaciones.unsubscribe();
   }
 
   logOut(){

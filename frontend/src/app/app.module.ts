@@ -10,8 +10,6 @@ import { AppRoutingModule } from './routes/app-routing.module';
 import { AppComponent } from './app.component';
 
 
-
-
 import { LoginComponent } from './components/login/login.component';
 import { RegistroComponent } from './components/registro/registro.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
@@ -48,7 +46,8 @@ import { NotificacionesComponent } from './components/notificaciones/notificacio
     MatIconModule,
     MatSnackBarModule,
     MatTabsModule, 
-    MatSidenavModule
+    MatSidenavModule,
+
   ],
   providers: [],
   bootstrap: [AppComponent]
