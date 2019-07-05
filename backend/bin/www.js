@@ -79,8 +79,8 @@ socketio.on('connection', function(socket){
             //console.log('tamaño', clients.length)
             if (error) throw error;
             if (clients.length == 1){
-                //console.log("------notificar al otro-----------");
-                //socketio.emit('nueva-notificacion-mensaje-privado', cuerpo);
+                console.log("------notificar al otro-----------");
+                socketio.emit('nueva-notificacion-mensaje-privado', cuerpo);
             } // => [PZDoMHjiu8PYfRiKAAAF, Anw2LatarvGVVXEIAAAD]
           });
         //socketio.emit('nuevo-mensaje-privado', cuerpo);

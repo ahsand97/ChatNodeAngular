@@ -168,13 +168,13 @@ export class MensajesComponent implements OnInit, OnDestroy {
       console.log('mensaje-privado', mensaje);
       this.messages.push(mensaje);
       if(mensaje.emisor == this.identidad.nickname){
-        /*this._getUsers.guardarMensajeBD(this.identidad, mensaje)
+        this._getUsers.guardarMensajeBD(this.identidad, mensaje)
         .then(respuesta=>{
 
         })
         .catch(error=>{
 
-        })*/
+        })
       }
     });
 

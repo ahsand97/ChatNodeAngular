@@ -8,6 +8,8 @@ import {MatSnackBar} from '@angular/material/snack-bar';
 import Swal from 'sweetalert2';
 import { EliminarcuentaService } from 'src/app/services/eliminarcuenta.service';
 
+import { ToastrService } from 'ngx-toastr';
+
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
@@ -29,6 +31,7 @@ export class MainComponent implements OnInit /*OnDestroy*/ {
   cuentaeliminada:boolean;
 
   ObservadorNotificaciones:any;
+  ObservadorNotificacionMensajePrivado:any;
 
 
   constructor(
@@ -37,7 +40,8 @@ export class MainComponent implements OnInit /*OnDestroy*/ {
     private _chatService:ChatService, 
     private _Refresh:RefreshService,
     private _snackBar: MatSnackBar,
-    private _DeleteAccount:EliminarcuentaService
+    private _DeleteAccount:EliminarcuentaService,
+    private _toastr:ToastrService
     ) {}
 
   refresh(){
@@ -67,6 +71,14 @@ export class MainComponent implements OnInit /*OnDestroy*/ {
       //this.messages.push(mensaje);
       this.openSnackBar('Nuevo evento en la comunidad '+mensaje.nombreComunidad_FK,'Ir a comunidades')
     });
+
+    this.ObservadorNotificacionMensajePrivado = this._chatService.getNotificacionMensajePrivado().subscribe((mensaje:any)=>{
+      //console.log(mensaje);
+      if(mensaje.receptor == this.identidad.nickname){
+        this._toastr.info('Mensaje de '+mensaje.emisor,'Nuevo mensaje privado!', {positionClass: 'toast-bottom-right', timeOut: 5000});
+      }
+    });
+
     //window.onbeforeunload = () => this.ngOnDestroy();
   }
   
@@ -85,6 +97,7 @@ export class MainComponent implements OnInit /*OnDestroy*/ {
     this._chatService.sendIdentidadLogout({nickname: this.identidad.nickname, nombre: this.identidad.nombre});
     this._chatService.disconnect();
     this.ObservadorNotificaciones.unsubscribe();
+    this.ObservadorNotificacionMensajePrivado.unsubscribe();
   }
 
   logOut(){

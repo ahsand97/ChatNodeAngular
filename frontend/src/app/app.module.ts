@@ -20,6 +20,10 @@ import { EventosComponent } from './components/eventos/eventos.component';
 import { MensajesComponent } from './components/mensajes/mensajes.component';
 import { NotificacionesComponent } from './components/notificaciones/notificaciones.component';
 
+
+import { ToastrModule } from 'ngx-toastr';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -47,6 +51,7 @@ import { NotificacionesComponent } from './components/notificaciones/notificacio
     MatSnackBarModule,
     MatTabsModule, 
     MatSidenavModule,
+    ToastrModule.forRoot() 
 
   ],
   providers: [],

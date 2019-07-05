@@ -32,7 +32,6 @@ export class SalasComponent implements OnInit, OnDestroy {
   ObservadorMensajesSalas:any;
   ObservadorUsuariosConectadosSala:any;
   ObservadorUsuariosDesconectadosSala:any;
-  ObservadorNotificacionMensajePrivado:any;
 
   constructor(private _GetUsersService:GetUsersService, private _Auth:AuthService, private _Router:Router, private _chatService:ChatService, private _Refresh:RefreshService, private _formBuilder:FormBuilder) { }
 
@@ -72,14 +71,6 @@ export class SalasComponent implements OnInit, OnDestroy {
         }
        }
     });
-    
-    this.ObservadorNotificacionMensajePrivado = this._chatService.getNotificacionMensajePrivado().subscribe((mensaje:any)=>{
-      //console.log(mensaje);
-
-      if(mensaje.receptor == this.identidad.nickname){
-
-      }
-    });
 
     this._GetUsersService.getUsers(this.identidad, this.roomSelcted.name)
     .then(respuesta=>{
@@ -118,7 +109,6 @@ export class SalasComponent implements OnInit, OnDestroy {
     this.ObservadorMensajesSalas.unsubscribe();
     this.ObservadorUsuariosConectadosSala.unsubscribe();
     this.ObservadorUsuariosDesconectadosSala.unsubscribe();
-    this.ObservadorNotificacionMensajePrivado.unsubscribe();
 
     
   }
