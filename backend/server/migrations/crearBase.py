@@ -14,6 +14,7 @@ class Usuarios(BaseCliente):
     nombre = Column(Text, nullable=False)
     password = Column(Text, nullable=False)
     estado = Column(Boolean, nullable=False, default=False)
+    ubicacion = Column(Text, nullable=False)
 
     nombre_sala_FK = Column(Text, ForeignKey('Salas.nombre', ondelete='SET NULL'), nullable=True, default="SalaNull")
 
@@ -151,18 +152,29 @@ class Usuarios_Conversaciones(BaseCliente):
         return '<Usuarios_Conversaciones {}>'.format(self.id_Usuario_Conversacion)
 
 
-
 engineCliente = create_engine('postgresql+psycopg2://postgres:9706@localhost/Cliente')
 BaseCliente.metadata.drop_all(engineCliente)
 BaseCliente.metadata.create_all(engineCliente, checkfirst=True)
 SessionCliente= sessionmaker(bind=engineCliente)
 session1 = SessionCliente()
 salaNull=Salas(nombre="SalaNull", descripcion="Sala NULL.")
-sala1=Salas(nombre="Sala 1", descripcion="Sala 1 por defecto.")
-sala2=Salas(nombre="Sala 2", descripcion="Sala 2 por defecto.")
-sala3=Salas(nombre="Sala 3", descripcion="Sala 3 por defecto.")
-sala4=Salas(nombre="Sala 4", descripcion="Sala 4 por defecto.")
-sala5=Salas(nombre="Sala 5", descripcion="Sala 5 por defecto.")
+
+sala1=Salas(nombre="Apía", descripcion="Mensajes sala Apía.")
+sala2=Salas(nombre="Balboa", descripcion="Mensajes sala Balboa.")
+sala3=Salas(nombre="Belén de Umbría", descripcion="Mensajes sala Belén de Umbría.")
+sala4=Salas(nombre="Dosquebradas", descripcion="Mensajes sala Dosquebradas.")
+sala5=Salas(nombre="Guática", descripcion="Mensajes sala Guática.")
+sala6=Salas(nombre="La Celia", descripcion="Mensajes sala La Celia.")
+sala7=Salas(nombre="La Virginia", descripcion="Mensajes sala La Virginia.")
+sala8=Salas(nombre="Marsella", descripcion="Mensajes sala Marsella.")
+sala9=Salas(nombre="Mistrató", descripcion="Mensajes sala Mistrató.")
+sala10=Salas(nombre="Pereira", descripcion="Mensajes sala Pereira.")
+sala11=Salas(nombre="Pueblo Rico", descripcion="Mensajes sala Pueblo Rico.")
+sala12=Salas(nombre="Quinchía", descripcion="Mensajes sala Quinchía.")
+sala13=Salas(nombre="Santa Rosa de Cabal", descripcion="Mensajes sala Santa Rosa de Cabal.")
+sala14=Salas(nombre="Santuario", descripcion="Mensajes sala Santuario.")
+
+
 
 comunidad1=Comunidades(nombre="Comunidad cristiana", descripcion="Que viva yisus")
 
@@ -173,13 +185,22 @@ session1.add(sala2)
 session1.add(sala3)
 session1.add(sala4)
 session1.add(sala5)
+session1.add(sala6)
+session1.add(sala7)
+session1.add(sala8)
+session1.add(sala9)
+session1.add(sala10)
+session1.add(sala11)
+session1.add(sala12)
+session1.add(sala13)
+session1.add(sala14)
 session1.commit()
 
-usuario1=Usuarios(nickname="reydali", nombre="Luis David", password="reydali")
-usuario2=Usuarios(nickname="sara", nombre="SaraJn", password="sara")
-usuario3=Usuarios(nickname="nectar", nombre="Francisca Thompson", password="nectar")
-usuario4=Usuarios(nickname="burra", nombre="Laburra", password="burra")
-usuario5=Usuarios(nickname="pepegranjero", nombre="LuisDa", password="pepegranjero")
+usuario1=Usuarios(nickname="reydali", nombre="Luis David", password="reydali", ubicacion="Pereira")
+usuario2=Usuarios(nickname="sara", nombre="SaraJn", password="sara", ubicacion="Pereira")
+usuario3=Usuarios(nickname="nectar", nombre="Francisca Thompson", password="nectar", ubicacion="Pereira")
+usuario4=Usuarios(nickname="burra", nombre="Laburra", password="burra", ubicacion="Pereira")
+usuario5=Usuarios(nickname="pepegranjero", nombre="LuisDa", password="pepegranjero", ubicacion="Pereira")
 
 session1.add(usuario1)
 session1.add(usuario2)

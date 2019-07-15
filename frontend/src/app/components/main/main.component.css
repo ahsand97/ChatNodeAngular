@@ -15,7 +15,7 @@
     overflow: hidden;
 }
 
-#nickname {
+#nickname,#ubicacion {
     color: rgb(59, 104, 94);
     font-family: Consolas;
     text-shadow: 0 1px 0 #ccc,

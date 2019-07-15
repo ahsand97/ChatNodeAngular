@@ -18,6 +18,10 @@ module.exports=(sequelize, DataTypes)=>{
             allowNull: false,
             defaultValue: false
         },
+        ubicacion:{
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         nombre_sala_FK:{
             type: DataTypes.STRING,
             allowNull: true,

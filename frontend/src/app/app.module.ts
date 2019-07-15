@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatSnackBarModule, MatTabsModule, MatSidenavModule} from '@angular/material';
+import { MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatSnackBarModule, MatTabsModule, MatSidenavModule, MatSelectModule, MatDialogModule} from '@angular/material';
 
 import { AppRoutingModule } from './routes/app-routing.module';
 import { AppComponent } from './app.component';
@@ -22,6 +22,7 @@ import { NotificacionesComponent } from './components/notificaciones/notificacio
 
 
 import { ToastrModule } from 'ngx-toastr';
+import { DialogCambioCiudadComponent } from './components/dialog-cambio-ciudad/dialog-cambio-ciudad.component';
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import { ToastrModule } from 'ngx-toastr';
     ComunidadesComponent,
     EventosComponent,
     MensajesComponent,
-    NotificacionesComponent
+    NotificacionesComponent,
+    DialogCambioCiudadComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +53,9 @@ import { ToastrModule } from 'ngx-toastr';
     MatSnackBarModule,
     MatTabsModule, 
     MatSidenavModule,
-    ToastrModule.forRoot() 
+    ToastrModule.forRoot(),
+    MatSelectModule,
+    MatDialogModule
 
   ],
   providers: [],

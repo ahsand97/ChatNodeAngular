@@ -45,7 +45,7 @@ function login(req,res){
             db.sequelize.query("UPDATE \"Usuarios\" SET \"estado\" = \'true\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
             db.sequelize.query("UPDATE \"Usuarios\" SET \"nombre_sala_FK\" = \'Sala 1\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
             var token = jwt.createToken(usuario, false);
-            usuarioEnvio = {token: token, nickname: usuario.dataValues['nickname'], nombre: usuario.dataValues['nombre']}
+            usuarioEnvio = {token: token, nickname: usuario.dataValues['nickname'], nombre: usuario.dataValues['nombre'], ubicacion: usuario.dataValues['ubicacion']}
             res.status(200).send(usuarioEnvio);
         }
         else{
@@ -224,7 +224,7 @@ function newToken(req, res){
                 return res.status(401).send({id: '1', message: "Acceso no autorizado."});
             }else{
                 var newtoken = jwt.createToken(req.body.nickname, true);
-                usuarioEnvio = {nuevotoken: newtoken, nickname: req.body.nickname, nombre: req.body.nombre}
+                usuarioEnvio = {nuevotoken: newtoken, nickname: req.body.nickname, nombre: req.body.nombre, ubicacion: req.body.ubicacion}
                 res.status(200).send(usuarioEnvio);
             }
         })

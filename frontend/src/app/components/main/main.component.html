@@ -12,7 +12,11 @@
   <div style="display: inline-block; padding-right: 20px;">
   <button mat-stroked-button color="warn" (click)="alertaEliminar()">Eliminar Cuenta</button>
   </div>
-  <h4 style="padding-right: 20px; display: inline-block;" id="nickname">Tu: {{identidad.nickname}}</h4>
+  <div style="display: inline-block; padding-right: 20px;">
+      <button mat-stroked-button color="primary" (click)="alertaUbicacion()">Cambiar Ubicación</button>
+  </div>
+  <h4 style="padding-right: 20px; display: inline-block;" id="ubicacion">Ubicación: {{identidad.ubicacion}}</h4>
+  <h4 style="padding-right: 20px; display: inline-block;" id="nickname">Tú: {{identidad.nickname}}</h4>
   <div style="text-align:right; padding-right: 2%">
     <button class="btn btn-danger" (click)="logOut()">Salir</button>
   </div>

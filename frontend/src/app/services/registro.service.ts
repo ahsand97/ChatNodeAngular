@@ -12,7 +12,7 @@ export class RegistroService {
     this.url = GLOBAL.url;
   }
 
-  registrar(nuevoUsuario: { 'nickname': any; 'nombre': any; 'password': any; }){
+  registrar(nuevoUsuario: { 'nickname': any; 'nombre': any; 'password': any; 'ubicacion':any;}){
     let headers= new Headers({
       'Content-Type':'application/json'
     });

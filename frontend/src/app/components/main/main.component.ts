@@ -3,7 +3,10 @@ import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
 import { ChatService } from 'src/app/services/chat.service';
 import { RefreshService } from 'src/app/services/refresh.service';
-import {MatSnackBar} from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import {DialogCambioCiudadComponent } from 'src/app/components/dialog-cambio-ciudad/dialog-cambio-ciudad.component'
+
 
 import Swal from 'sweetalert2';
 import { EliminarcuentaService } from 'src/app/services/eliminarcuenta.service';
@@ -15,7 +18,7 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
-export class MainComponent implements OnInit /*OnDestroy*/ {
+export class MainComponent implements OnInit, OnDestroy {
 
   links = [
     {path:'salas', label:'Salas'},
@@ -157,6 +160,10 @@ export class MainComponent implements OnInit /*OnDestroy*/ {
         })
         
       }})
+  }
+
+  alertaUbicacion(){
+
   }
 
 }

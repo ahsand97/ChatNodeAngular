@@ -27,6 +27,19 @@
 
               <div class="form-group">
                 <mat-form-field class="col-xs-12">
+                  <label for="ubicacion" class="text-info">Ubicación:</label><br>
+                  <mat-select formControlName="ubicacion" (click)="hideError()">
+                    <mat-option *ngFor="let municipio of Municipios" [value]="municipio">
+                      {{municipio}}
+                    </mat-option>
+                  </mat-select>
+                  <!--<input matInput type="text" formControlName="ubicacion" (click)="hideError()">-->
+                  <mat-error *ngIf="(ubicacion.dirty || ubicacion.touched) && ubicacion.invalid && ubicacion.errors.required">Selecciona una ubicación</mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="form-group">
+                <mat-form-field class="col-xs-12">
                   <label for="password" class="text-info">Contraseña:</label><br>
                   <input matInput type="password" formControlName="password" (click)="hideError()">
                   <mat-error *ngIf="(password.dirty || password.touched) && password.invalid && password.errors.required">Escribe una contraseña</mat-error>

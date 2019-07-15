@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { MustMatch } from './validadorClaves';
 import { RegistroService } from 'src/app/services/registro.service';
 
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar, MatSelectModule } from '@angular/material';
 import { ChatService } from 'src/app/services/chat.service';
 
 @Component({
@@ -14,6 +14,14 @@ import { ChatService } from 'src/app/services/chat.service';
 })
 export class RegistroComponent implements OnInit {
   registroForm: FormGroup;
+  Municipios=['Apía', 'Balboa',
+  'Belén de Umbría', 'Dosquebradas',
+  'Guática', 'La Celia',
+  'La Virginia', 'Marsella',
+  'Mistrató', 'Pereira',
+  'Pueblo Rico', 'Quinchía',
+  'Santa Rosa de Cabal','Santuario'
+  ]
 
   constructor(private _SnackBar:MatSnackBar ,private _ServicioRegistro:RegistroService, private _Router:Router, private _formBuilder:FormBuilder, private _chatServie:ChatService) { }
 
@@ -21,6 +29,7 @@ export class RegistroComponent implements OnInit {
     this.registroForm = this._formBuilder.group({
       nickname: ['',[Validators.required, Validators.minLength(4), Validators.maxLength(20)]],
       nombre: ['',[Validators.required]],
+      ubicacion:['',[Validators.required]],
       password: ['',[Validators.required, Validators.minLength(4), Validators.maxLength(30)]],
       confirmpassword: ['',[Validators.required, Validators.minLength(4), Validators.maxLength(30)]]
     },{
@@ -31,6 +40,7 @@ export class RegistroComponent implements OnInit {
   get nickname() { return this.registroForm.get('nickname'); }
   get password() { return this.registroForm.get('password'); }
   get nombre()   { return this.registroForm.get('nombre');   }
+  get ubicacion() { return this.registroForm.get('ubicacion'); }
   get confirmpassword() {return this.registroForm.get('confirmpassword'); }
 
   hideError(){
@@ -41,7 +51,7 @@ export class RegistroComponent implements OnInit {
   }
 
   registro(){
-    let nuevoUsuario = {'nickname': this.nickname.value, 'nombre': this.nombre.value, 'password': this.password.value};
+    let nuevoUsuario = {'nickname': this.nickname.value, 'nombre': this.nombre.value, 'ubicacion':this.ubicacion.value, 'password': this.password.value};
     this._ServicioRegistro.registrar(nuevoUsuario)
     .then(respuesta=>{
       this._chatServie.sendNuevoUsuarioSistema({tipo:'global', nickname:nuevoUsuario.nickname, nombre:nuevoUsuario.nombre, estado:'false'});
