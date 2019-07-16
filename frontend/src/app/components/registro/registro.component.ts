@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { MustMatch } from './validadorClaves';
 import { RegistroService } from 'src/app/services/registro.service';
 
-import { MatSnackBar, MatSelectModule } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 import { ChatService } from 'src/app/services/chat.service';
 
 @Component({

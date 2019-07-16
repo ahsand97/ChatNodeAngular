@@ -1,3 +1,22 @@
-<p>
-  dialog-cambio-ciudad works!
-</p>
+<form [formGroup]="cambioCiudadForm" (ngSubmit)="cambioCiudad()" autocomplete="off">
+    <h1 style="text-align: center;" mat-dialog-title>Cambiar Ubicación</h1>
+    <mat-dialog-content>
+      <mat-form-field>
+          <mat-select formControlName="ubicacion" placeholder="Selecciona ubicación">
+            <ng-container *ngFor="let municipio of Municipios">
+              <ng-template [ngIf]="municipio !== identidad.ubicacion">
+                <mat-option [value]="municipio">
+                  {{municipio}}
+                </mat-option>
+              </ng-template>
+            </ng-container>
+          </mat-select>
+            <!--<input matInput type="text" formControlName="ubicacion" (click)="hideError()">-->
+          <mat-error *ngIf="(ubicacion.dirty || ubicacion.touched) && ubicacion.invalid && ubicacion.errors.required">Selecciona una ubicación</mat-error>
+      </mat-form-field>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+      <button mat-button type="submit" [disabled]="!cambioCiudadForm.valid">Cambiar Ubicación</button>
+      <button mat-button type="button" mat-dialog-close>Cancelar</button>
+    </mat-dialog-actions>
+</form>

@@ -56,7 +56,7 @@ export class ChatService {
   }
 
   enviarIdentidadalConectar(sala:any, cuerpo:any){
-    this.socket.emit('usuario-conectado', {nickname: cuerpo['nickname'], nombre:cuerpo['nombre'], sala:sala});
+    this.socket.emit('usuario-conectado', {nickname: cuerpo['nickname'], nombre:cuerpo['nombre'], sala:sala, ubicacion: cuerpo['ubicacion']});
   }
 
   enviarIdentidadalDesconectar(sala:any, cuerpo:any){
@@ -75,9 +75,21 @@ export class ChatService {
     this.socket.emit('leave', cuerpo);
   }
 
+  cambioUBicacion(cuerpo:any){
+    this.socket.emit('cambio-ubicacion', cuerpo);
+  }
+
   public getUsuarioLogin = () => {
     return Observable.create((observer) => {
         this.socket.on('nuevo-usuario-login', (message) => {
+            observer.next(message);
+        });
+    }); 
+  }
+
+  public getCambioUbicacion = () => {
+    return Observable.create((observer) => {
+        this.socket.on('cambio-ubicacion', (message) => {
             observer.next(message);
         });
     }); 

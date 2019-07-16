@@ -52,6 +52,11 @@ socketio.on('connection', function(socket){
         console.log('nueva-conversacion', cuerpa);
     });
 
+    socket.on('cambio-ubicacion', function(cuerpa){
+        socketio.emit('cambio-ubicacion', cuerpa);
+        console.log('cambio-ubicacion', cuerpa);
+    });
+
     socket.on('nuevo-mensaje', function(cuerpo){
         let today = new Date();
         let time = (today.getHours()<10?'0':'') + today.getHours() + ":" + (today.getMinutes()<10?'0':'') + today.getMinutes() + ":" + (today.getSeconds()<10?'0':'') + today.getSeconds();

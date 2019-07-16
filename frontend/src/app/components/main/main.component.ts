@@ -5,20 +5,21 @@ import { ChatService } from 'src/app/services/chat.service';
 import { RefreshService } from 'src/app/services/refresh.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogRef } from '@angular/material';
-import {DialogCambioCiudadComponent } from 'src/app/components/dialog-cambio-ciudad/dialog-cambio-ciudad.component'
+import { DialogCambioCiudadComponent } from 'src/app/components/dialog-cambio-ciudad/dialog-cambio-ciudad.component'
 
 
 import Swal from 'sweetalert2';
 import { EliminarcuentaService } from 'src/app/services/eliminarcuenta.service';
 
 import { ToastrService } from 'ngx-toastr';
+import { GetUsersService } from 'src/app/services/get-users.service';
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
-export class MainComponent implements OnInit, OnDestroy {
+export class MainComponent implements OnInit /*OnDestroy*/ {
 
   links = [
     {path:'salas', label:'Salas'},
@@ -26,6 +27,8 @@ export class MainComponent implements OnInit, OnDestroy {
     {path:'comunidades', label:'Comunidades'}
     
   ]
+
+  DialogCambioCiudadRef: MatDialogRef<DialogCambioCiudadComponent>;
 
   identidad:any;
   mensaje:string;
@@ -35,6 +38,7 @@ export class MainComponent implements OnInit, OnDestroy {
 
   ObservadorNotificaciones:any;
   ObservadorNotificacionMensajePrivado:any;
+  ObservadorCambioCiudad:any;
 
 
   constructor(
@@ -44,7 +48,9 @@ export class MainComponent implements OnInit, OnDestroy {
     private _Refresh:RefreshService,
     private _snackBar: MatSnackBar,
     private _DeleteAccount:EliminarcuentaService,
-    private _toastr:ToastrService
+    private _toastr:ToastrService,
+    private _dialog:MatDialog,
+    private _GetUsersService:GetUsersService
     ) {}
 
   refresh(){
@@ -52,14 +58,14 @@ export class MainComponent implements OnInit, OnDestroy {
     .then(respuesta=>{
       this._Auth.setIdentity(respuesta);
       //Enviar identidad login
-      this._chatService.sendIdentidadLogin({nickname: respuesta.nickname, nombre: respuesta.nombre});
+      this._chatService.sendIdentidadLogin({nickname: respuesta.nickname, nombre: respuesta.nombre, ubicacion: respuesta.ubicacion});
     })
     .catch(error=>{
       console.log(error);
       let errorhandler = error.json();
       if(errorhandler['id'] == '1'){
         //Enviar identidad logout
-        this._chatService.sendIdentidadLogout({nickname: this.identidad.nickname, nombre: this.identidad.nombre});
+        this._chatService.sendIdentidadLogout({nickname: this.identidad.nickname, nombre: this.identidad.nombre, ubicacion: this.identidad.ubicacion});
         this._Auth.logOut();
         this._Router.navigate(['/login']);
       }
@@ -82,6 +88,7 @@ export class MainComponent implements OnInit, OnDestroy {
       }
     });
 
+
     //window.onbeforeunload = () => this.ngOnDestroy();
   }
   
@@ -101,6 +108,9 @@ export class MainComponent implements OnInit, OnDestroy {
     this._chatService.disconnect();
     this.ObservadorNotificaciones.unsubscribe();
     this.ObservadorNotificacionMensajePrivado.unsubscribe();
+    if(this.ObservadorCambioCiudad){
+      this.ObservadorCambioCiudad.unsubscribe();
+    }
   }
 
   logOut(){
@@ -163,7 +173,23 @@ export class MainComponent implements OnInit, OnDestroy {
   }
 
   alertaUbicacion(){
-
+    this.DialogCambioCiudadRef = this._dialog.open(DialogCambioCiudadComponent);
+    this.ObservadorCambioCiudad = this.DialogCambioCiudadRef.afterClosed().subscribe(ubicacion=>{
+      if(ubicacion){
+        this.identidad['ubicacion'] = ubicacion;
+        this._Auth.setIdentity(this.identidad);
+        this._GetUsersService.changeUbicacionUser(this.identidad)
+        .then(respuesta=>{
+          this._chatService.cambioUBicacion({nickname: this.identidad['nickname'], nombre: this.identidad['nombre'], ubicacion_nueva: this.identidad['ubicacion']});
+        })
+        .catch(error=>{
+          if(error['id'] == 1){
+            this._Auth.logOut();
+            this._Router.navigate(['/login']);
+          }
+        })
+      }
+    });
   }
 
 }

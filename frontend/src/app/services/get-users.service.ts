@@ -125,4 +125,21 @@ export class GetUsersService {
     return this._http.post(this.url + 'changeroom', identidad, options).toPromise()
     .then(res=>res.json());
   }
+
+  changeUbicacionUser(identidad:any){
+    var token:any;
+    if(identidad['token']){
+      token = identidad['token'];
+    }
+    else{
+      token = identidad['nuevotoken'];
+    }
+    let headers= new Headers({
+      'Authorization': token,
+      'Content-type': 'application/json'
+    });
+    let options= new RequestOptions({headers:headers});
+    return this._http.post(this.url + 'changeUbicacion', identidad, options).toPromise()
+    .then(res=>res.json());
+  }
 }

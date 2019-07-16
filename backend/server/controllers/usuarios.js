@@ -43,7 +43,7 @@ function login(req,res){
     .then(usuario=>{
         if(usuario){
             db.sequelize.query("UPDATE \"Usuarios\" SET \"estado\" = \'true\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
-            db.sequelize.query("UPDATE \"Usuarios\" SET \"nombre_sala_FK\" = \'Sala 1\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+            db.sequelize.query("UPDATE \"Usuarios\" SET \"nombre_sala_FK\" = \'Apía\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
             var token = jwt.createToken(usuario, false);
             usuarioEnvio = {token: token, nickname: usuario.dataValues['nickname'], nombre: usuario.dataValues['nombre'], ubicacion: usuario.dataValues['ubicacion']}
             res.status(200).send(usuarioEnvio);
@@ -94,7 +94,7 @@ function getAll(req,res){
                     .then(usuarios=>{
                         let usuariosEnvio=[];
                         for (let usuario of usuarios){
-                            usuarioCiclo={nickname:usuario.nickname, nombre:usuario.nombre, estado:usuario.estado};
+                            usuarioCiclo={nickname:usuario.nickname, nombre:usuario.nombre, ubicacion: usuario.ubicacion, estado:usuario.estado};
                             usuariosEnvio.push(usuarioCiclo);
                         }
                         res.status(200).send({usuariosEnvio});
@@ -108,7 +108,7 @@ function getAll(req,res){
                     .then(usuarios=>{
                         let usuariosEnvio=[];
                         for (let usuario of usuarios){
-                            usuarioCiclo={nickname:usuario.nickname, nombre:usuario.nombre, estado:usuario.estado};
+                            usuarioCiclo={nickname:usuario.nickname, nombre:usuario.nombre, ubicacion: usuario.ubicacion, estado:usuario.estado};
                             usuariosEnvio.push(usuarioCiclo);
                         }
 
@@ -125,7 +125,6 @@ function getAll(req,res){
 }
 
 function changeRoom(req,res){
-    console.log('cambioSala');  
     if(!req.headers.authorization){
         return res.status(403).send({message: "La petición no tiene la cabecera de autenticación."});
     }
@@ -172,6 +171,52 @@ function changeRoom(req,res){
     }
 }
 
+function changeUbicacion(req,res){
+    if(!req.headers.authorization){
+        return res.status(403).send({message: "La petición no tiene la cabecera de autenticación."});
+    }
+    else{
+        var token=req.headers.authorization.replace(/['"]+/g,'');
+        var payload=nJwt.verify(token, secret,(err,verifiedJwt)=>{
+            if(err){
+                usuarios.findOne({
+                    where:{
+                        nickname: req.body.nickname
+                    }
+                })
+                .then(usuario=>{
+                    if(usuario){
+                        db.sequelize.query("UPDATE \"Usuarios\" SET \"nombre_sala_FK\" = \'SalaNull\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+                        db.sequelize.query("UPDATE \"Usuarios\" SET \"estado\" = \'false\' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+                    }
+                    else{
+                        res.status(401).send({id: '1', message: "Acceso no autorizado."});
+                    }
+                })
+                .catch(err=>{
+                    res.status(500).send({id: '2', message: "Ocurrió un error al buscar el usuario."});
+                })
+                return res.status(401).send({id: '1', message: "Acceso no autorizado."});
+            }else{
+                usuarios.findOne({
+                    where:{
+                        nickname: req.body.nickname
+                    }
+                })
+                .then(usuario=>{
+                    if(usuario){
+                        db.sequelize.query("UPDATE \"Usuarios\" SET \"ubicacion\" = '"+req.body.ubicacion+"' WHERE \"nickname\" = " + "\'"+usuario.nickname+"\'");
+                        return res.status(200).send({message:'Ubicación cambiada.'});
+                    }
+                    return res.status(401).send({id: '1', message: "Acceso no autorizado."});
+                })
+                .catch(err=>{
+                    res.status(500).send({id: '2', message: "Ocurrió un error al buscar el usuario."});
+                })
+            }
+        })
+    }
+}
 
 function logout(req,res){
     if(!req.headers.authorization){
@@ -350,5 +395,6 @@ module.exports={
     newToken,
     changeRoom,
     deleteAccount, 
-    comunitiesUser
+    comunitiesUser,
+    changeUbicacion
 }

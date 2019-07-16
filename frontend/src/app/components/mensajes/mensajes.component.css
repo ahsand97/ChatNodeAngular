@@ -45,6 +45,7 @@ color: pink;
 
 @media (min-width: 200px) {
   #sidebar-wrapper {
+    width: 300px;
     margin-left: 0;
     height: 700px;
     overflow-y: auto;

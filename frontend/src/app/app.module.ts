@@ -59,6 +59,7 @@ import { DialogCambioCiudadComponent } from './components/dialog-cambio-ciudad/d
 
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents:[DialogCambioCiudadComponent]
 })
 export class AppModule { }

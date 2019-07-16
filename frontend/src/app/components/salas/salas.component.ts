@@ -17,21 +17,32 @@ export class SalasComponent implements OnInit, OnDestroy {
   mensajeForm: FormGroup;
 
   rooms = [
-    {name:"Sala 1", messages: [], users:[] },
-    {name:"Sala 2", messages: [], users:[] },
-    {name:"Sala 3", messages: [], users:[] },
-    {name:"Sala 4", messages: [], users:[] },
-    {name:"Sala 5", messages: [], users:[] }
+    {name:"Apía", messages: [], users:[] },
+    {name:"Balboa", messages: [], users:[] },
+    {name:"Belén de Umbría", messages: [], users: [] },
+    {name:"Dosquebradas", messages: [], users: [] },
+    {name:"Guática", messages: [], users: [] },
+    {name:"La Celia", messages: [], users: [] },
+    {name:"La Virginia", messages: [], users: [] },
+    {name:"Marsella", messages: [], users: [] },
+    {name:"Mistrató", messages: [], users: [] },
+    {name:"Pereira", messages: [], users:[] },
+    {name:"Pueblo Rico", messages: [], users: [] },
+    {name:"Quinchía", messages: [], users: [] },
+    {name:"Santa Rosa de Cabal", messages:[], users: [] },
+    {name:"Santuario", messages: [], users: [] }
   ];
+
   roomSelcted:any = this.rooms[0];
   //messages:string[] = [];
   identidad:any;
-  envio: { nickname: any; cuerpo: any; sala:any;};
+  envio: { nickname: any; cuerpo: any; sala:any; ubicacion: any;};
   mensaje: string;
 
   ObservadorMensajesSalas:any;
   ObservadorUsuariosConectadosSala:any;
   ObservadorUsuariosDesconectadosSala:any;
+  ObservadorCambioCiudad:any;
 
   constructor(private _GetUsersService:GetUsersService, private _Auth:AuthService, private _Router:Router, private _chatService:ChatService, private _Refresh:RefreshService, private _formBuilder:FormBuilder) { }
 
@@ -41,20 +52,28 @@ export class SalasComponent implements OnInit, OnDestroy {
     this._GetUsersService.changeRoomUser(this.identidad, this.roomSelcted.name)
     
     this.ObservadorMensajesSalas = this._chatService.getMessages().subscribe((mensaje:any)=>{
-      let sala = parseInt(mensaje.sala[mensaje.sala.length - 1]) - 1;
-      this.rooms[sala].messages.push(mensaje);
+      for(let recorrerRooms = 0; recorrerRooms < this.rooms.length; recorrerRooms++){
+        if(this.rooms[recorrerRooms].name == mensaje.sala){
+          this.rooms[recorrerRooms].messages.push(mensaje);
+        }
+      }
+      /*let sala = parseInt(mensaje.sala[mensaje.sala.length - 1]) - 1;
+      this.rooms[sala].messages.push(mensaje);*/
     });
 
     this.ObservadorUsuariosConectadosSala = this._chatService.getUsersConectedSala().subscribe((mensaje:any)=>{
+      let existe = false;
+      console.log(mensaje);
       if(mensaje.nickname != this.identidad.nickname){
-        let sala = parseInt(mensaje.sala[mensaje.sala.length - 1]) - 1;
-        if(this.rooms[sala].users.length == 0){
-          this.rooms[sala].users.push({nickname: mensaje.nickname, nombre: mensaje.nombre});
-        }
-        else{
-          for(let usuario=0; usuario < this.rooms[sala].users.length; usuario++){
-            if(mensaje.nickname != this.rooms[sala].users[usuario].nickname){
-              this.rooms[sala].users.push({nickname: mensaje.nickname, nombre: mensaje.nombre});
+        for(let recorrerRooms = 0; recorrerRooms < this.rooms.length; recorrerRooms++){
+          if(this.rooms[recorrerRooms].name == mensaje.sala){
+            for(let recorrerUsers = 0; recorrerUsers < this.rooms[recorrerRooms].users.length; recorrerUsers++){
+              if(this.rooms[recorrerRooms].users[recorrerUsers].nickname == mensaje.nickname){
+                existe = true;
+              }
+            }
+            if(existe == false){
+              this.rooms[recorrerRooms].users.push({nickname: mensaje.nickname, nombre: mensaje.nombre, ubicacion: mensaje.ubicacion});
             }
           }
         }
@@ -63,13 +82,31 @@ export class SalasComponent implements OnInit, OnDestroy {
     
     this.ObservadorUsuariosDesconectadosSala = this._chatService.getUsersDisconectedSala().subscribe((mensaje:any)=>{
       if(mensaje.nickname != this.identidad.nickname){
-        let sala = parseInt(mensaje.sala[mensaje.sala.length - 1]) - 1;
-        for(let usuario=0; usuario < this.rooms[sala].users.length; usuario++){
-          if(mensaje.nickname == this.rooms[sala].users[usuario].nickname){
-            this.rooms[sala].users.splice(usuario,1);
+        for(let recorrerRooms = 0; recorrerRooms < this.rooms.length; recorrerRooms++){
+          if(this.rooms[recorrerRooms].name == mensaje.sala){
+            for(let recorrerUsers = 0; recorrerUsers < this.rooms[recorrerRooms].users.length; recorrerUsers++){
+              if(this.rooms[recorrerRooms].users[recorrerUsers].nickname == mensaje.nickname){
+                this.rooms[recorrerRooms].users.splice(recorrerUsers,1);
+              }
+            }
           }
         }
-       }
+      }
+    });
+
+    this.ObservadorCambioCiudad = this._chatService.getCambioUbicacion().subscribe((mensaje:any)=>{
+      if(mensaje.nickname == this.identidad.nickname){
+        this.identidad = this._Auth.getIdentity();
+      }
+      else{
+        for(let recorrerRooms = 0; recorrerRooms < this.rooms.length; recorrerRooms++){
+          for(let recorrerUsers = 0; recorrerUsers < this.rooms[recorrerRooms].users.length; recorrerUsers++){
+            if(this.rooms[recorrerRooms].users[recorrerUsers].nickname == mensaje.nickname){
+              this.rooms[recorrerRooms].users[recorrerUsers].ubicacion = mensaje.ubicacion_nueva
+            }
+          }
+        }
+      }
     });
 
     this._GetUsersService.getUsers(this.identidad, this.roomSelcted.name)
@@ -109,16 +146,16 @@ export class SalasComponent implements OnInit, OnDestroy {
     this.ObservadorMensajesSalas.unsubscribe();
     this.ObservadorUsuariosConectadosSala.unsubscribe();
     this.ObservadorUsuariosDesconectadosSala.unsubscribe();
-
+    this.ObservadorCambioCiudad.unsubscribe();
     
   }
 
   refresh(){
     this._Refresh.refresh(this.identidad)
     .then(respuesta=>{
-      console.log(respuesta);
+      //console.log(respuesta);
       this._Auth.setIdentity(respuesta);
-      this.envio = {nickname:this.identidad['nickname'], cuerpo:this.mensaje, sala:this.roomSelcted.name};
+      this.envio = {nickname:this.identidad['nickname'], cuerpo:this.mensaje, sala:this.roomSelcted.name, ubicacion: this.identidad['ubicacion']};
       this._chatService.sendMessage(this.envio);
       this.mensaje = '';
     })
@@ -148,14 +185,14 @@ export class SalasComponent implements OnInit, OnDestroy {
     this._GetUsersService.getUsers(this.identidad, this.roomSelcted.name)
     .then(respuesta=>{
       for(let usuario of respuesta['usuariosEnvio']){
-        this._chatService.enviarIdentidadalConectar(this.roomSelcted.name, {nickname:usuario.nickname, nombre:usuario.nombre});
+        this._chatService.enviarIdentidadalConectar(this.roomSelcted.name, {nickname:usuario.nickname, nombre:usuario.nombre, ubicacion:usuario.ubicacion});
       }
     })
     .catch(error=>{
       console.log('error', error);
     })
     this._GetUsersService.changeRoomUser(this.identidad, this.roomSelcted.name);
-    this._chatService.enviarIdentidadalConectar(this.roomSelcted.name, {nickname:this.identidad['nickname'], nombre:this.identidad['nombre']});
+    this._chatService.enviarIdentidadalConectar(this.roomSelcted.name, {nickname:this.identidad['nickname'], nombre:this.identidad['nombre'], ubicacion: this.identidad['ubicacion']});
    
     //this._chatService.joinSala(this.roomSelcted.name);
   }

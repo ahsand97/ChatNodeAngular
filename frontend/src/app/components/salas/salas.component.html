@@ -8,22 +8,31 @@
         </div>
         <h3 style="text-align: center; width: 100%; color:blue;">Usuarios Conectados</h3>
         <div class="list-group list-group-flush" style="text-align: center; overflow-y: auto;">
-          <h2 style="color:#b4542b; display: inline;" *ngFor="let user of roomSelcted.users" class="list-group-item list-group-item-action bg-light botones">Nickname: <h2 style="color:darkslategrey; display: inline;">{{user.nickname}}</h2><h6 style="color: #b4542b;">Nombre: <h6 style="color: darkslategrey; display: inline;">{{user.nombre}}</h6></h6></h2>
+          <h2 style="color:#b4542b; display: inline;" *ngFor="let user of roomSelcted.users" class="list-group-item list-group-item-action bg-light botones">
+            Nickname: 
+            <h2 style="color:darkslategrey; display: inline;">{{user.nickname}}</h2>
+            <h6 style="color: #b4542b;">Nombre: 
+              <h6 style="color: darkslategrey; display: inline;">{{user.nombre}}</h6>
+            </h6>
+            <h6 style="color: #b4542b;">Ubicación: 
+                <h6 style="color: darkslategrey; display: inline;">{{user.ubicacion}}</h6>
+              </h6>
+          </h2>
         </div>
       </div>
       
       <div id="page-content-wrapper">
 
             <div class="messages-content" >
-              <h1 style="text-align: center; opacity: 0.3;">Mensajes {{roomSelcted.name}}</h1>
+              <h1 style="text-align: center; opacity: 0.3;">Mensajes de la sala {{roomSelcted.name}}</h1>
               <br>
               <ng-container *ngFor="let message of roomSelcted.messages">
                 <ng-container *ngIf="message.nickname === identidad.nickname; else condicionFalsa">
-                  <h4 style="text-align: right; padding-right: 20px;">->{{message.nickname}}:<h6 style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color:brown; margin-left: 28px; margin-bottom: -5px;">{{message.cuerpo}}</h6></h4>
+                  <h4 style="text-align: right; padding-right: 20px;">->{{message.nickname}} ({{message.ubicacion}}):<h6 style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color:brown; margin-left: 28px; margin-bottom: -5px;">{{message.cuerpo}}</h6></h4>
                   <h5 style="text-align: right; padding-right: 20px; font-size: 12px;">{{message.time}}</h5>
                 </ng-container>
                 <ng-template #condicionFalsa>
-                  <h4 style="padding-left: 20px;">->{{message.nickname}}:<h6 style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color:brown; margin-left: 28px; margin-bottom: -5px;">{{message.cuerpo}}</h6></h4>
+                  <h4 style="padding-left: 20px;">->{{message.nickname}} ({{message.ubicacion}}):<h6 style="-webkit-text-stroke-width: 1px; -webkit-text-stroke-color:brown; margin-left: 28px; margin-bottom: -5px;">{{message.cuerpo}}</h6></h4>
                   <h5 style="text-align: left; padding-left: 45px; font-size: 12px;">{{message.time}}</h5>
                 </ng-template>
               </ng-container>

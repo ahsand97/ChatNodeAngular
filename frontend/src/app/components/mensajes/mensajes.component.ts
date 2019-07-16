@@ -30,6 +30,7 @@ export class MensajesComponent implements OnInit, OnDestroy {
   ObservadorUsuarioHizoLogout:any;
   ObservadorMensajesGenerales:any;
   ObservadorMensajesPrivadosCargar:any;
+  ObservadorCambioCiudad:any;
 
   constructor(private _Auth:AuthService, private _Router:Router, private _chatService:ChatService, private _Refresh:RefreshService, private _getUsers:GetUsersService, private _formBuilder:FormBuilder) { }
 
@@ -39,9 +40,28 @@ export class MensajesComponent implements OnInit, OnDestroy {
 
     this._getUsers.getUsers(this.identidad, null)
     .then(respuesta=>{
-      //console.log(respuesta);
       for(let usuario of respuesta['usuariosEnvio']){
-        this._chatService.sendNuevoUsuarioSistema({solicitante: this.identidad.nickname, nickname:usuario.nickname, nombre:usuario.nombre, estado:usuario.estado});
+        this._chatService.sendNuevoUsuarioSistema({solicitante: this.identidad.nickname, nickname:usuario.nickname, nombre:usuario.nombre, estado:usuario.estado, ubicacion: usuario.ubicacion});
+      }
+    })
+    .catch(error=>{
+      console.log('error', error);
+      let errorhandler = error.json();
+      if (errorhandler.id == '1'){
+        this._Auth.logOut();
+        this._Router.navigate(['/login']);
+      }
+    })
+
+    this._getUsers.getConversaciones(this.identidad)
+    .then(respuesta=>{
+      for(let usuario_conversacion of respuesta['usuariosConversacionesEnvio']){
+        if(usuario_conversacion.nicknameUsuario1_FK == this.identidad.nickname){
+          this._chatService.enviarNuevaConversacion({tipo: 'carga', solicitante: this.identidad.nickname, nicknameUsuario1_FK: this.identidad.nickname, nicknameUsuario2_FK: usuario_conversacion.nicknameUsuario2_FK, idConversacion_FK: usuario_conversacion.idConversacion_FK});
+        }
+        else if(usuario_conversacion.nicknameUsuario2_FK == this.identidad.nickname){
+          this._chatService.enviarNuevaConversacion({tipo: 'carga', solicitante: this.identidad.nickname, nicknameUsuario1_FK: usuario_conversacion.nicknameUsuario1_FK, nicknameUsuario2_FK: this.identidad.nickname, idConversacion_FK: usuario_conversacion.idConversacion_FK});
+        }
       }
     })
     .catch(error=>{
@@ -66,26 +86,6 @@ export class MensajesComponent implements OnInit, OnDestroy {
       }
     });
 
-    this._getUsers.getConversaciones(this.identidad)
-    .then(respuesta=>{
-      for(let usuario_conversacion of respuesta['usuariosConversacionesEnvio']){
-        if(usuario_conversacion.nicknameUsuario1_FK == this.identidad.nickname){
-          this._chatService.enviarNuevaConversacion({tipo: 'carga', solicitante: this.identidad.nickname, nicknameUsuario1_FK: this.identidad.nickname, nicknameUsuario2_FK: usuario_conversacion.nicknameUsuario2_FK, idConversacion_FK: usuario_conversacion.idConversacion_FK});
-        }
-        else if(usuario_conversacion.nicknameUsuario2_FK == this.identidad.nickname){
-          this._chatService.enviarNuevaConversacion({tipo: 'carga', solicitante: this.identidad.nickname, nicknameUsuario1_FK: usuario_conversacion.nicknameUsuario1_FK, nicknameUsuario2_FK: this.identidad.nickname, idConversacion_FK: usuario_conversacion.idConversacion_FK});
-        }
-      }
-    })
-    .catch(error=>{
-      console.log('error', error);
-      let errorhandler = error.json();
-      if (errorhandler.id == '1'){
-        this._Auth.logOut();
-        this._Router.navigate(['/login']);
-      }
-    })
-
     this.ObservadorNuevasConversaciones = this._chatService.getNuevaConversacion().subscribe((mensaje:any)=>{
       //console.log(mensaje);
       if(mensaje.tipo == 'carga'){
@@ -93,14 +93,14 @@ export class MensajesComponent implements OnInit, OnDestroy {
           if(mensaje.nicknameUsuario1_FK == this.identidad.nickname){
             for(let user of this.users){
               if(user.nickname == mensaje.nicknameUsuario2_FK){
-                this.conversaciones.unshift({usuario1: this.identidad.nickname, usuario2: mensaje.nicknameUsuario2_FK, idConversacion_FK: mensaje.idConversacion_FK, nombre_usuario_contrario: user.nombre, estado_usuario_contrario: user.estado});
+                this.conversaciones.unshift({usuario1: this.identidad.nickname, usuario2: mensaje.nicknameUsuario2_FK, idConversacion_FK: mensaje.idConversacion_FK, nombre_usuario_contrario: user.nombre, estado_usuario_contrario: user.estado, ubicacion_usuario_contrario: user.ubicacion});
               }
             }
           }
           if(mensaje.nicknameUsuario2_FK == this.identidad.nickname) {
             for(let user of this.users){
               if(user.nickname == mensaje.nicknameUsuario1_FK){
-                this.conversaciones.unshift({usuario1: this.identidad.nickname, usuario2: mensaje.nicknameUsuario1_FK, idConversacion_FK: mensaje.idConversacion_FK, nombre_usuario_contrario: user.nombre, estado_usuario_contrario: user.estado});
+                this.conversaciones.unshift({usuario1: this.identidad.nickname, usuario2: mensaje.nicknameUsuario1_FK, idConversacion_FK: mensaje.idConversacion_FK, nombre_usuario_contrario: user.nombre, estado_usuario_contrario: user.estado, ubicacion_usuario_contrario: user.ubicacion});
               }
             }
           }
@@ -110,14 +110,14 @@ export class MensajesComponent implements OnInit, OnDestroy {
         if(mensaje.nicknameUsuario1_FK == this.identidad.nickname ){
           for(let user of this.users){
             if(user.nickname == mensaje.nicknameUsuario2_FK){
-              this.conversaciones.unshift({usuario1: this.identidad.nickname, usuario2: mensaje.nicknameUsuario2_FK, idConversacion_FK: mensaje.idConversacion_FK, nombre_usuario_contrario: user.nombre, estado_usuario_contrario: user.estado});
+              this.conversaciones.unshift({usuario1: this.identidad.nickname, usuario2: mensaje.nicknameUsuario2_FK, idConversacion_FK: mensaje.idConversacion_FK, nombre_usuario_contrario: user.nombre, estado_usuario_contrario: user.estado, ubicacion_usuario_contrario: user.ubicacion});
             }
           }
         }
         if(mensaje.nicknameUsuario2_FK == this.identidad.nickname){
           for(let user of this.users){
             if(user.nickname == mensaje.nicknameUsuario1_FK){
-              this.conversaciones.unshift({usuario1: this.identidad.nickname, usuario2: mensaje.nicknameUsuario1_FK, idConversacion_FK: mensaje.idConversacion_FK, nombre_usuario_contrario: user.nombre, estado_usuario_contrario: user.estado});
+              this.conversaciones.unshift({usuario1: this.identidad.nickname, usuario2: mensaje.nicknameUsuario1_FK, idConversacion_FK: mensaje.idConversacion_FK, nombre_usuario_contrario: user.nombre, estado_usuario_contrario: user.estado, ubicacion_usuario_contrario: user.ubicacion});
             }
           }
         }
@@ -189,6 +189,24 @@ export class MensajesComponent implements OnInit, OnDestroy {
       }
     });
 
+    this.ObservadorCambioCiudad = this._chatService.getCambioUbicacion().subscribe((mensaje:any)=>{
+      if(mensaje.nickname == this.identidad.nickname){
+        this.identidad = this._Auth.getIdentity();
+      }
+      else{
+        for(let recorrerUsers = 0; recorrerUsers < this.users.length; recorrerUsers++){
+          if(this.users[recorrerUsers].nickname == mensaje.nickname){
+            this.users[recorrerUsers].ubicacion = mensaje.ubicacion_nueva;
+          }
+        }
+        for(let indexconversaciones=0; indexconversaciones < this.conversaciones.length; indexconversaciones++){
+          if(this.conversaciones[indexconversaciones].usuario2 == mensaje.nickname){
+            this.conversaciones[indexconversaciones].ubicacion_usuario_contrario = mensaje.ubicacion_nueva
+          }
+        }
+      }
+    });
+
     this.mensajeForm = this._formBuilder.group({
       mensaje: ['']
     });
@@ -214,6 +232,7 @@ export class MensajesComponent implements OnInit, OnDestroy {
     this.ObservadorUsuarioHizoLogout.unsubscribe();
     this.ObservadorMensajesGenerales.unsubscribe();
     this.ObservadorMensajesPrivadosCargar.unsubscribe();
+    this.ObservadorCambioCiudad.unsubscribe();
 
   }
 
