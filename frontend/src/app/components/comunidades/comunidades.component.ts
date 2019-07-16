@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { ChatService } from 'src/app/services/chat.service';
@@ -13,12 +13,12 @@ import { UsuariosService } from 'src/app/services/usuarios.service';
   templateUrl: './comunidades.component.html',
   styleUrls: ['./comunidades.component.css']
 })
-export class ComunidadesComponent implements OnInit {
+export class ComunidadesComponent implements OnInit, OnDestroy {
 
   communities = [];
   userCommunities = [];
 
-  communitySelected:any = {nombre:'Tupu Tama Dre', events:[], belonged:false};
+  communitySelected:any = {nombre:'Tupu Tama Dre', descripcion:'Elver guero de la cuarta',events:[], belonged:false};
   //events:string[] = [];
   identidad:any;
   envio: { nickname: any; cuerpo: any; sala:any;};
@@ -47,7 +47,7 @@ export class ComunidadesComponent implements OnInit {
         if(this.userCommunities.indexOf(comunidad.nombre) >= 0){
           belonged = true;
         }
-        this.communities.push({nombre:comunidad.nombre, events:[], belonged});
+        this.communities.push({nombre:comunidad.nombre,descripcion:comunidad.descripcion, events:[], belonged});
       }
       this.SelectCommunity(this.communities[0]);
       console.log("Comunidades ", this.communities);

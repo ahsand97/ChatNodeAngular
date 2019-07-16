@@ -152,7 +152,7 @@ class Usuarios_Conversaciones(BaseCliente):
         return '<Usuarios_Conversaciones {}>'.format(self.id_Usuario_Conversacion)
 
 
-engineCliente = create_engine('postgresql+psycopg2://postgres:9706@localhost/Cliente')
+engineCliente = create_engine('postgresql+psycopg2://postgres:papaya@localhost/Emprendimiento')
 BaseCliente.metadata.drop_all(engineCliente)
 BaseCliente.metadata.create_all(engineCliente, checkfirst=True)
 SessionCliente= sessionmaker(bind=engineCliente)
@@ -176,9 +176,20 @@ sala14=Salas(nombre="Santuario", descripcion="Mensajes sala Santuario.")
 
 
 
-comunidad1=Comunidades(nombre="Comunidad cristiana", descripcion="Que viva yisus")
+comunidad1=Comunidades(nombre="La Florida", descripcion="A veinte minutos de Pereira queda el nuevo epicentro de los deportes al aire libre, la vida bohemia y la gastronomía.Es La Florida, un corregimiento que se ha convertido en el nuevo destino para las escapadas de los pereiranos y en uno de los rincones favoritos de los viajeros.")
+comunidad2=Comunidades(nombre="La Pastora", descripcion="Se trata del Centro de Visitantes La Pastora, ubicado en el Parque Regional Natural Ucumarí, uno de los cinco parques naturales regionales protegidos de Risaralda que se pueden visitar. Descubre a continuación cómo llegar, conocer y disfrutar de este paraíso natural.")
+comunidad3=Comunidades(nombre="Laguna del Otún", descripcion="En el Eje Cafetero puedes disfrutar de la densidad y la magnitud de esta mágica Laguna del Otún en donde podrás experimentar diferentes pisos térmicos y conocer a través del recorrido el embalse natural, viviendo una experiencia única en Colombia.")
+comunidad4=Comunidades(nombre="Cerro del Nudo", descripcion="Es un sitio sin igual, pues allí nacen las quebradas que abastecen y proporcionan agua para consumo doméstico y agrícola a muchas veredas y municipios de la región del Risaralda; es un lugar para explotar, para reencontrarse con uno mismo y con la naturaleza, para conocer los escarbaderos de cusumbos y armadillos, para oír el melodioso trinar de las aves, y así poder llegar a entender y apoyar el porqué de estas iniciativas de conservación.")
+comunidad5=Comunidades(nombre="Bioparque Ukumarí", descripcion="El Parque Temático de Flora y Fauna de Pereira nació, a finales de los años noventa, como un sueño de los pereiranos. Siendo conscientes de las limitaciones de espacio y ubicación que se presentaban en el antiguo Zoológico Matecaña y considerando la gran importancia que tenía este atractivo turístico para la región, diferentes líderes de la ciudad, autoridades locales y representantes del gobierno nacional plantearon la idea de desarrollar un Bioparque que permitiera mejorar la calidad de vida a los animales del ZOO y contribuir a dinamizar la oferta turística de la región.")
+comunidad6=Comunidades(nombre="Consotá", descripcion="En el Parque Consotá, cada día es una oportunidad para vivir grandes experiencias y disfrutar los diferentes escenarios y atracciones.")
+
 
 session1.add(comunidad1)
+session1.add(comunidad2)
+session1.add(comunidad3)
+session1.add(comunidad4)
+session1.add(comunidad5)
+session1.add(comunidad6)
 session1.add(salaNull)
 session1.add(sala1)
 session1.add(sala2)
@@ -231,6 +242,7 @@ session1.commit()
 mensaje1=Mensajes_Privados(body="Hola como vas", emisor="reydali", receptor="sara", fecha_hora='01/07/2019 23:39:00', id_ConversacionFK=1)
 mensaje2=Mensajes_Privados(body="bien y tu?", emisor="sara", receptor="reydali", fecha_hora='01/07/2019 23:39:20', id_ConversacionFK=1)
 mensaje3=Mensajes_Privados(body="bien gracias", emisor="reydali", receptor="sara", fecha_hora='01/07/2019 23:39:30', id_ConversacionFK=1)
+
 
 session1.add(mensaje1)
 session1.add(mensaje2)

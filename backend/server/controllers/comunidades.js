@@ -36,7 +36,7 @@ function getAll(req,res){
                 .then(comunidades=>{
                     let comunidadesEnvio=[];
                     for (let comunidad of comunidades){
-                        comunidadCiclo={nickname:comunidad.nickname, nombre:comunidad.nombre};
+                        comunidadCiclo={descripcion:comunidad.descripcion, nombre:comunidad.nombre};
                         comunidadesEnvio.push(comunidadCiclo);
                     }
                     res.status(200).send({comunidadesEnvio});

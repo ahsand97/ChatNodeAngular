@@ -19,12 +19,12 @@ import { GetUsersService } from 'src/app/services/get-users.service';
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
-export class MainComponent implements OnInit /*OnDestroy*/ {
+export class MainComponent implements OnInit /*, OnDestroy*/ {
 
   links = [
     {path:'salas', label:'Salas'},
     {path:'mensajes', label:'Mensajes'},
-    {path:'comunidades', label:'Comunidades'}
+    {path:'comunidades', label:'Sitios Turisticos'}
     
   ]
 

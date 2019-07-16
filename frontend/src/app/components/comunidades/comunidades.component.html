@@ -2,14 +2,15 @@
     <div  class="d-flex" id="wrapper" >
 
       <div class="bg-light border-right" id="sidebar-wrapper">
-          <h3 style="text-align: center; width: 100%; color:blue;">Comunidades</h3>
+          <h3 style="text-align: center; width: 100%; color:blue;">Sitios Turisticos</h3>
         <div class="list-group list-group-flush" style="text-align: center;">
           <button style="color: #3A01DF;" *ngFor="let community of communities" class="list-group-item list-group-item-action bg-light botones" [attr.id]="community.nombre" (click)="SelectCommunity(community)"><h2>{{community.nombre}}</h2></button>
         </div>
       </div>
       <div  id="page-content-wrapper" class="show-events">
             <div class="messages-content" >
-              <h1 style="text-align: center; opacity: 0.3;">Eventos {{communitySelected.nombre}}</h1>
+              <h1 style="text-align: center; opacity: 0.3;">Eventos en {{communitySelected.nombre}}</h1>
+              <h3 style="text-align: center; opacity: 0.3;">{{communitySelected.descripcion}}</h3>
               <div *ngIf="communitySelected.belonged">
                 <div *ngFor="let event of communitySelected.events; let i=index">
                   <h6>Evento {{i}}</h6>
@@ -56,8 +57,8 @@
             </div>
       </div>
       <div *ngIf="!communitySelected.belonged">
-          <h4>Aún no perteneces a esta comunidad, ¿Deseas Unirte?</h4>
-        <button class="btn btn-danger" (click)="joinComunity()">Unirse</button>
+          <h4>Aún no puedes ver los eventos del lugar turístico seleccionado, ¿Deseas recibir notificaciones de este sitio turístico?</h4>
+        <button class="btn btn-danger" (click)="joinComunity()">Aceptar</button>
       </div>
       </div>
       <!-- /#page-content-wrapper -->
